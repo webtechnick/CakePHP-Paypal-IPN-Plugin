@@ -11,7 +11,6 @@ Special thanks: Peter Butler <http://www.studiocanaria.com>
 Install:
 1) copy plugin into your /app/plugins/paypal_ipn directory
 2) Add the following into your routes:
-
  /* Paypal IPN plugin */
   Router::connect('/paypal_ipn/edit/:id', array('admin' => true, 'plugin' => 'paypal_ipn', 'controller' => 'instant_payment_notifications', 'action' => 'edit'), array('id' => '[a-zA-Z0-9\-]+', 'pass' => array('id')));
   Router::connect('/paypal_ipn/view/:id', array('admin' => true, 'plugin' => 'paypal_ipn', 'controller' => 'instant_payment_notifications', 'action' => 'view'), array('id' => '[a-zA-Z0-9\-]+', 'pass' => array('id')));
@@ -21,10 +20,22 @@ Install:
   Router::connect('/paypal_ipn', array('admin' => true, 'plugin' => 'paypal_ipn', 'controller' => 'instant_payment_notifications', 'action' => 'index'));/*
   /* End Paypal IPN plugin */
   
-(optional) If you want to use the built in admin access to IPNs:
-3) Make sure you're logged in as an Administrator via the Auth component.
-4) Navigate to www.yoursite.com/paypal_ipn
+  
+  
+Administration: (optional) If you want to use the built in admin access to IPNs:
+1) Make sure you're logged in as an Administrator via the Auth component.
+2) Navigate to www.yoursite.com/paypal_ipn
 
+
+Paypal Button Helper: (optional) if you plan on using the paypal helper for your PayNow or Subscribe Buttons
+1) Update /paypal_ipn/config/paypal_ipn_config.php with your paypal information
+2) Add 'PaypalIpn.Paypal' to your helpers list in app_controller.php:
+       var $helpers = array('Html','Form','PaypalIpn.Paypal');
+3) Usage:
+       $paypal->button(String tittle, Options array);
+       Examples:
+           Subscribe: <php echo $paypal->button('Subscribe', array('type' => 'subscribe')); ?>
+           Pay Now: <php echo $paypal->button('Pay'); ?>
 
 
 Paypal Setup:

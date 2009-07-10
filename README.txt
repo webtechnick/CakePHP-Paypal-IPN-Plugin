@@ -6,6 +6,7 @@ Website: http://www.webtechnick.com
 Browse/Download: http://projects.webtechnick.com/paypal_ipn
 SVN: https://svn2.xp-dev.com/svn/nurvzy-paypal-ipn
 
+Special thanks: Peter Butler <http://www.studiocanaria.com>
 
 Install:
 1) copy plugin into your /app/plugins/paypal_ipn directory

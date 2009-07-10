@@ -48,6 +48,10 @@ class PaypalHelper extends AppHelper {
     }
   }
   
+  /****
+   *  __paypalPayNowButton constructs the pay now form from the given options
+   * @access private
+   */
   function __paypalPayNowButton($title = null, $options = array()){
     $title = (empty($title)) ? "Pay Now" : $title;
     
@@ -62,15 +66,27 @@ class PaypalHelper extends AppHelper {
     return $retval;
   }
   
-  function __paypalSubscribeButton($title = null, $options = array()){
+  /****
+   *  __paypalSubscribeButton constructs the subscribe form from the given options
+   * @access private
+   */
+   function __paypalSubscribeButton($title = null, $options = array()){
     $title = (empty($title)) ? "Pay Now" : $title;
     return "SUBSCRIBE";
   }
   
+  /****
+   *  __hiddenNameValue constructs the name value pair in a hidden input html tag
+   * @access private
+   */
   function __hiddenNameValue($name, $value){
     return $this->Html->tag('input', null, array('type' => 'hidden', 'name' => $name, 'value' => $value));
   }
   
+  /****
+   *  __submitButton constructs the submit button from the provided text
+   * @access private
+   */
   function __submitButton($text){
     return $this->Html->tag('input', null, array('type' => 'submit', 'value' => $text));
   }

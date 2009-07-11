@@ -67,16 +67,9 @@ class InstantPaymentNotificationsController extends PaypalIpnAppController {
   
   private function __processTransaction($txnId){
     $this->log("Processing Trasaction: $txnId",'paypal');
-    //Here is where you can implement code to apply the transaction to your system
-    //for example, you could now mark an order as paid, create a subscription, just
-    //retrieve the transaction using the txn_id passed and apply whatever logic your site
-    //needs.
-    
     //Put the afterPaypalNotification($txnId) into your app_controller.php
+    $this->afterPaypalNotification($txnId);
     
-    if(function_exists($this->afterPaypalNotification)){
-      $this->afterPaypalNotification($txnId);
-    }
   }
 	
 	/***********

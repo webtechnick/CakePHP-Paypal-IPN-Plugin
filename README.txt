@@ -66,3 +66,14 @@ Example:
   <input type="submit" value="Pay" />
   <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
 </form>
+
+
+Paypal Notification Callback:
+1) create a function in your /app/app_controller.php like so:
+
+  function afterPaypalNotification($txnId){
+    $this->log('Im in the afterPaypalNotification', 'paypal');
+    //Here is where you can implement code to apply the transaction to your app.
+    //for example, you could now mark an order as paid, a subscription, or give the user premium access.
+    //retrieve the transaction using the txnId passed and apply whatever logic your site needs.
+  }

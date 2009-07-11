@@ -3,6 +3,7 @@ class InstantPaymentNotificationsController extends PaypalIpnAppController {
 
 	var $name = 'InstantPaymentNotifications';
 	var $helpers = array('Html', 'Form');
+	var $components = array('Auth');
 	
 	function beforeFilter(){
 	  parent::beforeFilter();
@@ -70,6 +71,12 @@ class InstantPaymentNotificationsController extends PaypalIpnAppController {
     //for example, you could now mark an order as paid, create a subscription, just
     //retrieve the transaction using the txn_id passed and apply whatever logic your site
     //needs.
+    
+    //Put the afterPaypalNotification($txnId) into your app_controller.php
+    
+    if(function_exists($this->afterPaypalNotification)){
+      $this->afterPaypalNotification($txnId);
+    }
   }
 	
 	/***********

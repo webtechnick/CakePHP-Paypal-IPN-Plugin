@@ -16,18 +16,19 @@ class PaypalIpnConfig {
     'notify_url' => 'http://www.webtechnick.com/paypal_ipn/process', //Notify_url... set this to the process path of your paypal_ipn::instant_payment_notification::process action
     'currency_code' => 'USD', //Currency
     'lc' => 'US', //Locality
-    'cmd' => '_xclick', //command
     'item_name' => 'Paypal_IPN', //Default item name.
     'amount' => '15.00' //Default item amount.
   );
   
+  /***********
+    * Test settings to test with using a sandbox paypal account.
+    */
   var $testSettings = array(
     'business' => 'nick@webtechnick.com',
     'server' => 'https://www.sandbox.paypal.com',
     'notify_url' => 'http://www.webtechnick.com/paypal_ipn/process',
     'currency_code' => 'USD',
     'lc' => 'US',
-    'cmd' => '_xclick',
     'item_name' => 'Paypal_IPN',
     'amount' => '15.00'
   );

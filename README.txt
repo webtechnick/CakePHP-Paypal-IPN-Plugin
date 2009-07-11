@@ -1,5 +1,5 @@
 Paypal IPN plugin.  (Paypal Instant Payment Notification)
-Version 1.0
+Version 1.2
 Author: Nick Baker (nick@webtechnick.com)
 Website: http://www.webtechnick.com
 
@@ -9,18 +9,22 @@ SVN: https://svn2.xp-dev.com/svn/nurvzy-paypal-ipn
 Special thanks: Peter Butler <http://www.studiocanaria.com>
 
 Install:
-1) copy plugin into your /app/plugins/paypal_ipn directory
-2) Add the following into your routes:
- /* Paypal IPN plugin */
+1) Copy plugin into your /app/plugins/paypal_ipn directory
+2) Add the following into your /app/config/routes.php file:
+  /* Paypal IPN plugin */
+  Router::connect('/paypal_ipn/process', array('plugin' => 'paypal_ipn', 'controller' => 'instant_payment_notifications', 'action' => 'process'));
+  
+  /* Optional Routes, but nice for administration */
   Router::connect('/paypal_ipn/edit/:id', array('admin' => true, 'plugin' => 'paypal_ipn', 'controller' => 'instant_payment_notifications', 'action' => 'edit'), array('id' => '[a-zA-Z0-9\-]+', 'pass' => array('id')));
   Router::connect('/paypal_ipn/view/:id', array('admin' => true, 'plugin' => 'paypal_ipn', 'controller' => 'instant_payment_notifications', 'action' => 'view'), array('id' => '[a-zA-Z0-9\-]+', 'pass' => array('id')));
   Router::connect('/paypal_ipn/delete/:id', array('admin' => true, 'plugin' => 'paypal_ipn', 'controller' => 'instant_payment_notifications', 'action' => 'delete'), array('id' => '[a-zA-Z0-9\-]+', 'pass' => array('id')));
   Router::connect('/paypal_ipn/add', array('admin' => true, 'plugin' => 'paypal_ipn', 'controller' => 'instant_payment_notifications', 'action' => 'edit'));
-  Router::connect('/paypal_ipn/process', array('plugin' => 'paypal_ipn', 'controller' => 'instant_payment_notifications', 'action' => 'process'));
   Router::connect('/paypal_ipn', array('admin' => true, 'plugin' => 'paypal_ipn', 'controller' => 'instant_payment_notifications', 'action' => 'index'));/*
   /* End Paypal IPN plugin */
   
-  
+Paypal Setup:
+1) I suggest you start a sandbox account at https://developer.paypal.com
+2) Enable IPN in your account.
   
 Administration: (optional) If you want to use the built in admin access to IPNs:
 1) Make sure you're logged in as an Administrator via the Auth component.
@@ -31,20 +35,19 @@ Paypal Button Helper: (optional) if you plan on using the paypal helper for your
 1) Update /paypal_ipn/config/paypal_ipn_config.php with your paypal information
 2) Add 'PaypalIpn.Paypal' to your helpers list in app_controller.php:
        var $helpers = array('Html','Form','PaypalIpn.Paypal');
-3) Usage:
+3) Usage: (view the actual /paypal_ipn/views/helpers/paypal.php for more information)
        $paypal->button(String tittle, Options array);
-       Examples:
-           Subscribe: <php echo $paypal->button('Subscribe', array('type' => 'subscribe')); ?>
-           Pay Now: <php echo $paypal->button('Pay'); ?>
-
-
-Paypal Setup:
-1) I suggest you start a sandbox account at https://developer.paypal.com
-2) Enable IPN in your account.
-
-
+       Examples: 
+         $paypal->button('Pay Now', array('amount' => '12.00', 'item_name' => 'test item'));
+         $paypal->button('Subscribe', array('type' => 'subscribe', 'amount' => '60.00', 'term' => 'month', 'period' => '2'));
+         $paypal->button('Donate', array('type' => 'donate', 'amount' => '60.00'));
+         $paypal->button('Add To Cart', array('type' => 'addtocart', 'amount' => '15.00'));
+       Test Example:
+         $paypal->button('Pay Now', array('test' => true, 'amount' => '12.00', 'item_name' => 'test item'));
 
 Paypal Button:
+1) Use the PaypalHelper to generate your buttons for you. See Paypal Button Helper (above) for more.
+ - or -
 1) Make sure to use notify_url set to "http://www.yoursite.com/paypal_ipn/process" in your paypal button.
 Example:
   

@@ -1,7 +1,7 @@
 <?php
 class PaypalHelper extends AppHelper {
   
-  var $helpers = array('Html');
+  var $helpers = array('Html','Form');
 
   /*********************
     *  Setup the config based on the paypal_ipn_config in /plugins/paypal_ipn/config/paypal_ipn_config.php
@@ -27,7 +27,7 @@ class PaypalHelper extends AppHelper {
     * 
     *   helper_options:  
     *      test: true|false switches default settings in /config/paypal_ipn_config.php between settings and testSettings
-    *       type: 'pay' or 'subscribe' (default 'pay')
+    *      type: 'paynow' or 'subscribe' (default 'paynow')
     *    
     *    You may pass in api name value pairs to be passed directly to the paypal form link.  Refer to paypal.com for a complete list.
     *    some paypal API examples: 
@@ -37,6 +37,10 @@ class PaypalHelper extends AppHelper {
     *      etc...
     */
   function button($title = null, $options = array()){
+    if(is_array($title)){
+      $options = $title;
+      $title = isset($options['label']) ? $options['label'] : null;
+    }
     $defaults = (isset($options['test']) && $options['test']) ? $this->config->testSettings : $this->config->settings; 
     $options = array_merge($defaults, $options);
     
@@ -61,7 +65,6 @@ class PaypalHelper extends AppHelper {
        $retval .= $this->__hiddenNameValue($name, $value);
     }
     $retval .= $this->__submitButton($title);
-    $retval .= "</form>";
     
     return $retval;
   }
@@ -80,7 +83,7 @@ class PaypalHelper extends AppHelper {
    * @access private
    */
   function __hiddenNameValue($name, $value){
-    return $this->Html->tag('input', null, array('type' => 'hidden', 'name' => $name, 'value' => $value));
+    return "<input type='hidden' name='$name' value='$value' />";
   }
   
   /****
@@ -88,7 +91,7 @@ class PaypalHelper extends AppHelper {
    * @access private
    */
   function __submitButton($text){
-    return $this->Html->tag('input', null, array('type' => 'submit', 'value' => $text));
+    return $this->Form->end(array('label' => $text, 'div' => false));
   }
 }
 ?>

@@ -11,9 +11,9 @@ class PaypalIpnConfig {
     * Each settings key coresponds to the Paypal API.  Review www.paypal.com for more. 
     */
   var $settings = array(
-    'business' => 'nurvzy@gmail.com', //Your Paypal email account
+    'business' => 'live_email@paypal.com', //Your Paypal email account
     'server' => 'https://www.paypal.com', //Main paypal server.
-    'notify_url' => 'http://www.webtechnick.com/paypal_ipn/process', //Notify_url... set this to the process path of your paypal_ipn::instant_payment_notification::process action
+    'notify_url' => 'http://www.yoursite.com/paypal_ipn/process', //Notify_url... set this to the process path of your paypal_ipn::instant_payment_notification::process action
     'currency_code' => 'USD', //Currency
     'lc' => 'US', //Locality
     'item_name' => 'Paypal_IPN', //Default item name.
@@ -24,9 +24,9 @@ class PaypalIpnConfig {
     * Test settings to test with using a sandbox paypal account.
     */
   var $testSettings = array(
-    'business' => 'nick@webtechnick.com',
+    'business' => 'sandbox_email@paypal.com',
     'server' => 'https://www.sandbox.paypal.com',
-    'notify_url' => 'http://www.webtechnick.com/paypal_ipn/process',
+    'notify_url' => 'http://www.yoursite.com/paypal_ipn/process',
     'currency_code' => 'USD',
     'lc' => 'US',
     'item_name' => 'Paypal_IPN',

@@ -48,7 +48,7 @@ class PaypalHelper extends AppHelper {
     }    
     $defaults = (isset($options['test']) && $options['test']) ? $this->config->testSettings : $this->config->settings; 
     $options = array_merge($defaults, $options);
-    
+    $options['type'] = (isset($options['type'])) ? $options['type'] : "checkout";
     switch($options['type']){
       case 'subscribe': //Subscribe
         $options['cmd'] = '_xclick-subscriptions';

@@ -84,6 +84,10 @@ class PaypalHelper extends AppHelper {
   /****
    *  __hiddenNameValue constructs the name value pair in a hidden input html tag
    * @access private
+   * @param String name is the name of the hidden html element.
+   * @param String value is the value of the hidden html element.
+   * @access private
+   * @return Html form button and close form
    */
   function __hiddenNameValue($name, $value){
     return "<input type='hidden' name='$name' value='$value' />";
@@ -91,7 +95,9 @@ class PaypalHelper extends AppHelper {
   
   /****
    *  __submitButton constructs the submit button from the provided text
+   * @param String text | text is the label of the submit button.  Can use plain text or image url.
    * @access private
+   * @return Html form button and close form
    */
   function __submitButton($text){
     return $this->Form->end(array('label' => $text, 'div' => false));
@@ -100,6 +106,12 @@ class PaypalHelper extends AppHelper {
   /*************
     * __subscriptionOptions conversts human readable subscription terms 
     * into paypal terms if need be
+    *  @access private
+    *  @param array options | human readable options into paypal API options
+    *     INT period //paypal api period of term, 2, 3, 1
+    *     String term //paypal API term //month, year, day, week
+    *     Float amount //paypal API amount to charge for perioud of term.
+    *  @return array options 
     */
   function __subscriptionOptions($options = array()){
     //Period... every 1, 2, 3, etc.. Term
@@ -116,7 +128,7 @@ class PaypalHelper extends AppHelper {
         default: $options['t3'] = $options['term'];
       }
       
-    }//$options['a3'] = $options['amount'];
+    }
     
     return $options;
   }

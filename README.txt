@@ -1,5 +1,5 @@
 Paypal IPN plugin.  (Paypal Instant Payment Notification)
-Version 1.4
+Version 1.5
 Author: Nick Baker (nick@webtechnick.com)
 Website: http://www.webtechnick.com
 
@@ -10,7 +10,8 @@ Special thanks: Peter Butler <http://www.studiocanaria.com>
 
 Install:
 1) Copy plugin into your /app/plugins/paypal_ipn directory
-2) Add the following into your /app/config/routes.php file:
+2) Run the paypal_ipn.sql into your database.
+3) Add the following into your /app/config/routes.php file:
   /* Paypal IPN plugin */
   Router::connect('/paypal_ipn/process', array('plugin' => 'paypal_ipn', 'controller' => 'instant_payment_notifications', 'action' => 'process'));
   

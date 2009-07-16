@@ -1,9 +1,9 @@
 <?php
 /************
   * Use these settings to set defaults for the Paypal Helper class.
-  * The PaypalHelper class will help you create paynow and subscribe buttons for you.
+  * The PaypalHelper class will help you create paynow, subscribe, donate, or addtocart buttons for you.
   * 
-  * All these options can be set on the fly as well.
+  * All these options can be set on the fly as well within the helper
   */
 class PaypalIpnConfig {
 

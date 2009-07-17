@@ -16,7 +16,10 @@ class PaypalHelper extends AppHelper {
     *  function button will create a complete form button to Pay Now, Donate, Add to Cart, or Subscribe using the paypal service.
     *  Configuration for the button is in /config/paypal_ip_config.php
     *  
-    * for this to work the option 'item_name' and 'amount' must be set in the array options.
+    * for this to work the option 
+'item_name' and 'amount' must be set in 
+the array options or default config 
+options.
     *
     *  Example: 
     *     $paypal->button('Pay Now', array('amount' => '12.00', 'item_name' => 'test item'));
@@ -32,7 +35,8 @@ class PaypalHelper extends AppHelper {
     * 
     *   helper_options:  
     *      test: true|false switches default settings in /config/paypal_ipn_config.php between settings and testSettings
-    *      type: 'paynow' or 'subscribe' (default 'paynow')
+    *      type: 'paynow', 'addtocart', 
+'donate' or 'subscribe' (default 'paynow')
     *    
     *    You may pass in api name value pairs to be passed directly to the paypal form link.  Refer to paypal.com for a complete list.
     *    some paypal API examples: 
@@ -48,7 +52,9 @@ class PaypalHelper extends AppHelper {
     }    
     $defaults = (isset($options['test']) && $options['test']) ? $this->config->testSettings : $this->config->settings; 
     $options = array_merge($defaults, $options);
-    $options['type'] = (isset($options['type'])) ? $options['type'] : "checkout";
+    $options['type'] = 
+(isset($options['type'])) ? 
+$options['type'] : "paynow";
     switch($options['type']){
       case 'subscribe': //Subscribe
         $options['cmd'] = '_xclick-subscriptions';

@@ -1,7 +1,4 @@
 <?php
-
-App::import('Core', array('HttpSocket'));
-
 class InstantPaymentNotification extends PaypalIpnAppModel {
     /**
      * name is the name of the model
@@ -12,9 +9,9 @@ class InstantPaymentNotification extends PaypalIpnAppModel {
     var $name = 'InstantPaymentNotification';
     
     /*******************
-      * the HttpSocket.
+      * the PaypalSource
       */
-    var $Http = null;
+    var $paypal = null;
     
     /************************
       * verifies POST data given by the paypal instant payment notification
@@ -23,27 +20,9 @@ class InstantPaymentNotification extends PaypalIpnAppModel {
       */
     function isValid($data){
       if(!empty($data)){
-        $this->Http =& new HttpSocket();
-        
-        $data['cmd'] = '_notify-validate';
-      
-        if(isset($data['test_ipn'])) {
-          $server = 'https://www.sandbox.paypal.com/cgi-bin/webscr';
-        } else {
-          $server = 'https://www.paypal.com/cgi-bin/webscr';
-        }
-        
-        $response = $this->Http->post($server, $data);
-        
-        if($response == "VERIFIED"){
-          return true;
-        }
-        
-        if(!$response){
-          $this->log('HTTP Error in InstantPaymentNotification::process while posting back to PayPal', 'paypal');
-        }
-        
-        return false;
+        App::import(array('type' => 'File', 'name' => 'PaypalIpn.PaypalIpnSource', 'file' => 'models'.DS.'datasources'.DS.'paypal_ipn_source.php'));
+        $this->paypal = new PaypalIpnSource();
+        return $this->paypal->isValid($data);
       }
     }
 }

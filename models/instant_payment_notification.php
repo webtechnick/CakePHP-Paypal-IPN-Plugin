@@ -1,4 +1,7 @@
 <?php
+
+App::import('Core', array('HttpSocket'));
+
 class InstantPaymentNotification extends PaypalIpnAppModel {
     /**
      * name is the name of the model
@@ -8,6 +11,11 @@ class InstantPaymentNotification extends PaypalIpnAppModel {
      */
     var $name = 'InstantPaymentNotification';
     
+    /*******************
+      * the HttpSocket.
+      */
+    var $Http = null;
+    
     /************************
       * verifies POST data given by the paypal instant payment notification
       * @param array $data Most likely directly $_POST given by the controller.
@@ -15,49 +23,28 @@ class InstantPaymentNotification extends PaypalIpnAppModel {
       */
     function verify($data){
       if(!empty($data)){
-        //start the URL for verification.
-        $transaction = 'cmd=_notify-validate';
-        foreach($data as $key => $value){
-          $value = urlencode(stripslashes($value));
-          $transaction .= "&$key=$value";
-        }
+        $this->Http =& new HttpSocket();
         
-        //create headers for post back
-        $header = "POST /cgi-bin/webscr HTTP/1.0\r\n";
-        $header .= "Content-Type: application/x-www-form-urlencoded\r\n";
-        $header .= "Content-Length: " . strlen($transaction) . "\r\n\r\n";
-        
-        //If this is a sandbox transaction then 'test_ipn' will be set to '1'
-        if(isset($data['test_ipn'])) {
-          $server = 'www.sandbox.paypal.com';
-        } else {
-          $server = 'www.paypal.com';
-        }
-        
-        //and post the transaction back for validation
-        $fp = fsockopen("ssl://$server", 443, $errno, $errstr, 30);
-        if(!$fp) {
-          //...didn't get a response so log error in error logs
-          $this->log('HTTP Error in InstantPaymentNotification::process while posting back to PayPal: Transaction='.$transaction);
-        }
-        else {
-          //...got a response, so we'll go through the response looking for VERIFIED or INVALID
-          fputs($fp, $header . $transaction);
-          while (!feof($fp)) {
-            $response = fgets($fp, 1024);
-            if(strcmp($response, "INVALID") == 0) {
-              //The response is INVALID so log it for investigation
-              $this->log("Found Invalid: $transaction",'paypal');
-            }
-            elseif(strcmp($response, "VERIFIED") == 0) {
-              return true; //Its verified.
-            }
-          }
-        }
-        fclose ($fp);
-      }
+        $data['cmd'] = '_notify-validate';
       
-      return false;
+        if(isset($data['test_ipn'])) {
+          $server = 'https://www.sandbox.paypal.com/cgi-bin/webscr';
+        } else {
+          $server = 'https://www.paypal.com/cgi-bin/webscr';
+        }
+        
+        $response = $this->Http->post($server, $data);
+        
+        if($response == "VERIFIED"){
+          return true;
+        }
+        
+        if(!$response){
+          $this->log('HTTP Error in InstantPaymentNotification::process while posting back to PayPal', 'paypal');
+        }
+        
+        return false;
+      }
     }
 }
 ?>

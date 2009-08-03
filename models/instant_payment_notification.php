@@ -24,6 +24,7 @@ class InstantPaymentNotification extends PaypalIpnAppModel {
         $this->paypal = new PaypalIpnSource();
         return $this->paypal->isValid($data);
       }
+      return false;
     }
 }
 ?>

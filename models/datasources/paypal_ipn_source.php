@@ -40,7 +40,7 @@ class PaypalIpnSource extends DataSource {
     }
     
     if(!$response){
-      $this->log('HTTP Error in InstantPaymentNotification::process while posting back to PayPal', 'paypal');
+      $this->log('HTTP Error in PaypalIpnSource::isValid while posting back to PayPal', 'paypal');
     }
     
     return false;

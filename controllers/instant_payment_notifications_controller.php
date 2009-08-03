@@ -23,8 +23,7 @@ class InstantPaymentNotificationsController extends PaypalIpnAppController {
 	  * @author Nick Baker
 	  */
 	function process(){
-	  if($this->InstantPaymentNotification->verify($_POST)){
-	    //The response is VERIFIED so format the $_POST for processing
+	  if($this->InstantPaymentNotification->isValid($_POST)){
       $notification = array();
       $notification['InstantPaymentNotification'] = $_POST;
       $this->InstantPaymentNotification->save($notification);

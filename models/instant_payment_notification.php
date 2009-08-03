@@ -21,7 +21,7 @@ class InstantPaymentNotification extends PaypalIpnAppModel {
       * @param array $data Most likely directly $_POST given by the controller.
       * @return boolean true | false depending on if data received is actually valid from paypal and not from some script monkey
       */
-    function verify($data){
+    function isValid($data){
       if(!empty($data)){
         $this->Http =& new HttpSocket();
         

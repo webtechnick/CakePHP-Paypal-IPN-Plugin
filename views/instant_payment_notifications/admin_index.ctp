@@ -8,11 +8,11 @@ echo $paginator->counter(array(
 ?></p>
 <table cellpadding="0" cellspacing="0">
 <tr>
-	<th><?php echo $paginator->sort('id');?></th>
 	<th><?php echo $paginator->sort('payer_email');?></th>
 	<th><?php echo $paginator->sort('item_name');?></th>
 	<th><?php echo $paginator->sort('item_number');?></th>
-	<th><?php echo $paginator->sort('quantity');?></th>
+	<th><?php echo $paginator->sort('payment_gross');?></th>
+	<th><?php echo $paginator->sort('created');?></th>
 	<th class="actions"><?php __('Actions');?></th>
 </tr>
 <?php
@@ -25,9 +25,6 @@ foreach ($instantPaymentNotifications as $instantPaymentNotification):
 ?>
 	<tr<?php echo $class;?>>
 		<td>
-			<?php echo $instantPaymentNotification['InstantPaymentNotification']['id']; ?>
-		</td>
-		<td>
 			<?php echo $instantPaymentNotification['InstantPaymentNotification']['payer_email']; ?>
 		</td>
 		<td>
@@ -37,7 +34,10 @@ foreach ($instantPaymentNotifications as $instantPaymentNotification):
 			<?php echo $instantPaymentNotification['InstantPaymentNotification']['item_number']; ?>
 		</td>
 		<td>
-			<?php echo $instantPaymentNotification['InstantPaymentNotification']['quantity']; ?>
+			<?php echo $instantPaymentNotification['InstantPaymentNotification']['payment_gross']; ?>
+		</td>
+		<td>
+			<?php echo $instantPaymentNotification['InstantPaymentNotification']['created']; ?>
 		</td>
 		<td class="actions">
 		  <?php echo $html->link('View', array('action' => 'view', $instantPaymentNotification['InstantPaymentNotification']['id'])); ?>

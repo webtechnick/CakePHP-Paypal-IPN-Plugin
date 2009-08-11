@@ -1,5 +1,5 @@
 Paypal IPN plugin.  (Paypal Instant Payment Notification)
-Version 1.5
+Version 1.5.1
 Author: Nick Baker (nick@webtechnick.com)
 Website: http://www.webtechnick.com
 
@@ -11,16 +11,11 @@ Special thanks: Peter Butler <http://www.studiocanaria.com>
 Install:
 1) Copy plugin into your /app/plugins/paypal_ipn directory
 2) Run the paypal_ipn.sql into your database.
-3) Add the following into your /app/config/routes.php file:
+3) Add the following into your /app/config/routes.php file (optional):
   /* Paypal IPN plugin */
   Router::connect('/paypal_ipn/process', array('plugin' => 'paypal_ipn', 'controller' => 'instant_payment_notifications', 'action' => 'process'));
-  
-  /* Optional Routes, but nice for administration */
-  Router::connect('/paypal_ipn/edit/:id', array('admin' => true, 'plugin' => 'paypal_ipn', 'controller' => 'instant_payment_notifications', 'action' => 'edit'), array('id' => '[a-zA-Z0-9\-]+', 'pass' => array('id')));
-  Router::connect('/paypal_ipn/view/:id', array('admin' => true, 'plugin' => 'paypal_ipn', 'controller' => 'instant_payment_notifications', 'action' => 'view'), array('id' => '[a-zA-Z0-9\-]+', 'pass' => array('id')));
-  Router::connect('/paypal_ipn/delete/:id', array('admin' => true, 'plugin' => 'paypal_ipn', 'controller' => 'instant_payment_notifications', 'action' => 'delete'), array('id' => '[a-zA-Z0-9\-]+', 'pass' => array('id')));
-  Router::connect('/paypal_ipn/add', array('admin' => true, 'plugin' => 'paypal_ipn', 'controller' => 'instant_payment_notifications', 'action' => 'edit'));
-  Router::connect('/paypal_ipn', array('admin' => true, 'plugin' => 'paypal_ipn', 'controller' => 'instant_payment_notifications', 'action' => 'index'));/*
+  /* Optional Route, but nice for administration */
+  Router::connect('/paypal_ipn/:action/*', array('admin' => 'true', 'plugin' => 'paypal_ipn', 'controller' => 'instant_payment_notifications', 'action' => 'index'));
   /* End Paypal IPN plugin */
   
 Paypal Setup:
@@ -53,19 +48,9 @@ Paypal Button:
 Example:
   
 <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
-  <input type="hidden" name="cmd" value="_xclick" />
-  <input type="hidden" name="business" value="myPaypalEmail@server.com" />
-  <input type="hidden" name="lc" value="US" />
-  <input type="hidden" name="item_name" value="Item Name" />
-  <input type="hidden" name="amount" value="15" />
-  <input type="hidden" name="currency_code" value="USD" />
-  <input type="hidden" name="no_note" value="1" />
-  <input type="hidden" name="no_shipping" value="1" />
-  <input type="hidden" name="rm" value="1" />
+  ...
   <input type="hidden" name="notify_url" value="http://www.yoursite.com/paypal_ipn/process" />
-  <input type="hidden" name="bn" value="PP-BuyNowBF:btn_paynow_LG.gif:NonHosted" />
-  <input type="submit" value="Pay" />
-  <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
+  ...
 </form>
 
 
@@ -73,8 +58,20 @@ Paypal Notification Callback:
 1) create a function in your /app/app_controller.php like so:
 
   function afterPaypalNotification($txnId){
-    $this->log('Im in the afterPaypalNotification', 'paypal');
     //Here is where you can implement code to apply the transaction to your app.
     //for example, you could now mark an order as paid, a subscription, or give the user premium access.
     //retrieve the transaction using the txnId passed and apply whatever logic your site needs.
-  }
+      
+    $transaction = ClassRegistry::init('PaypalIpn.InstantPaymentNotification')->findById($txnId);
+    $this->log($transaction['InstantPaymentNotification']['id'], 'paypal');
+  
+    //Tip: be sure to check the payment_status is complete because failure 
+    //     are also saved to your database for review.
+  
+    if($transaction['InstantPaymentNotification']['payment_status'] == 'Completed'){
+      //Yay!  We have monies!
+    }
+    else {
+      //Oh no, better look at this transaction to determine what to do; like email a decline letter.
+    }
+  } 

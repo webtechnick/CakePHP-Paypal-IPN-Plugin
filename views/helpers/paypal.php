@@ -26,6 +26,7 @@ options.
     *     $paypal->button('Subscribe', array('type' => 'subscribe', 'amount' => '60.00', 'term' => 'month', 'period' => '2'));
     *     $paypal->button('Donate', array('type' => 'donate', 'amount' => '60.00'));
     *     $paypal->button('Add To Cart', array('type' => 'addtocart', 'amount' => '15.00'));
+    *     $paypal->button('Unsubscribe', array('type' => 'unsubscribe'));
     *  Test Example:
     *     $paypal->button('Pay Now', array('test' => true, 'amount' => '12.00', 'item_name' => 'test item'));
     *

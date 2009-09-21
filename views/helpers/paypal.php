@@ -52,13 +52,16 @@ options.
     }    
     $defaults = (isset($options['test']) && $options['test']) ? $this->config->testSettings : $this->config->settings; 
     $options = array_merge($defaults, $options);
-    $options['type'] = 
-(isset($options['type'])) ? 
-$options['type'] : "paynow";
+    $options['type'] = (isset($options['type'])) ? $options['type'] : "paynow";
+    
     switch($options['type']){
       case 'subscribe': //Subscribe
         $options['cmd'] = '_xclick-subscriptions';
         $default_title = 'Subscribe';
+        $options['no_note'] = 1;
+        $options['no_shipping'] = 1;
+        $options['src'] = 1;
+        $options['sra'] = 1;
         $options = $this->__subscriptionOptions($options);
         break;
       case 'addtocart': //Add To Cart
@@ -69,6 +72,11 @@ $options['type'] : "paynow";
       case 'donate': //Doante
         $options['cmd'] = '_donations';
         $default_title = 'Donate';
+        break;
+      case 'unsubscribe': //Unsubscribe
+        $options['cmd'] = '_subscr-find';
+        $options['alias'] = $options['business'];
+        $default_title = 'Unsubscribe';
         break;
       default: //Pay Now
         $options['cmd'] = '_xclick';
@@ -121,9 +129,15 @@ $options['type'] : "paynow";
     */
   function __subscriptionOptions($options = array()){
     //Period... every 1, 2, 3, etc.. Term
-    if(isset($options['period'])) $options['p3'] = $options['period'];
+    if(isset($options['period'])){
+      $options['p3'] = $options['period'];
+      unset($options['period']);
+    }
     //Mount billed
-    if(isset($options['amount'])) $options['a3'] = $options['amount'];
+    if(isset($options['amount'])){
+      $options['a3'] = $options['amount'];
+      unset($options['amount']);
+    }
     //Terms, Month(s), Day(s), Week(s), Year(s)
     if(isset($options['term'])){
       switch($options['term']){
@@ -133,7 +147,7 @@ $options['type'] : "paynow";
         case 'week': $options['t3'] = 'W'; break;
         default: $options['t3'] = $options['term'];
       }
-      
+      unset($options['term']);
     }
     
     return $options;

@@ -86,7 +86,7 @@ options.
     }
     
     $title = (empty($title)) ? $default_title : $title;
-    $retval = "<form action='{$options['server']}/cgi-bin/webscr' method='post'>";
+    $retval = "<form action='{$options['server']}/cgi-bin/webscr' method='post'><div>";
     unset($options['server']);
     foreach($options as $name => $value){
        $retval .= $this->__hiddenNameValue($name, $value);
@@ -115,7 +115,7 @@ options.
    * @return Html form button and close form
    */
   function __submitButton($text){
-    return $this->Form->end(array('label' => $text, 'div' => false));
+    return "</div>" . $this->Form->end(array('label' => $text));
   }
   
   /*************

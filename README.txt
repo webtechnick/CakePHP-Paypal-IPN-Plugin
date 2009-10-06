@@ -1,10 +1,19 @@
 Paypal IPN plugin.  (Paypal Instant Payment Notification)
-Version 2.1
+Version 2.2.2
 Author: Nick Baker (nick@webtechnick.com)
 Website: http://www.webtechnick.com
 
 Browse/Download: http://projects.webtechnick.com/paypal_ipn
-SVN: https://svn2.xp-dev.com/svn/nurvzy-paypal-ipn
+SVN: http://svn2.xp-dev.com/svn/nurvzy-paypal-ipn
+
+CHANGELOG:
+1.0: Initial release
+1.1: Added cleaner routes
+2.0: Helper added
+2.1: Added cake schema install script
+2.2: Added paypal unsubscribe type
+2.2.1: Bug fix with subscription issues
+2.2.2: Fixed validation issues with paypal button in strict doctype
 
 Special thanks: Peter Butler <http://www.studiocanaria.com>
 

@@ -3,7 +3,7 @@ class InstantPaymentNotificationsController extends PaypalIpnAppController {
 
 	var $name = 'InstantPaymentNotifications';
 	var $helpers = array('Html', 'Form');
-	var $components = array('Auth');
+	var $components = array('Auth','Email');
 	
 	/************
 	  * beforeFilter makes sure the process is allowed by auth

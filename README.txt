@@ -1,5 +1,5 @@
 Paypal IPN plugin.  (Paypal Instant Payment Notification)
-Version 2.2.2
+Version 3.0
 Author: Nick Baker (nick@webtechnick.com)
 Website: http://www.webtechnick.com
 
@@ -14,6 +14,7 @@ CHANGELOG:
 2.2: Added paypal unsubscribe type
 2.2.1: Bug fix with subscription issues
 2.2.2: Fixed validation issues with paypal button in strict doctype
+3.0: Added new basic Paypal IPN email capabality.
 
 Special thanks: Peter Butler <http://www.studiocanaria.com>
 
@@ -85,3 +86,42 @@ Paypal Notification Callback:
       //Oh no, better look at this transaction to determine what to do; like email a decline letter.
     }
   } 
+  
+Basic Email Feature:
+ Utility method to send basic emails based on a paypal IPN transaction.
+ This method is very basic, if you need something more complicated I suggest
+ creating your own method in the afterPaypalNotification function you build
+ in the app_controller.php
+
+ Example Usage: (InstantPaymentNotification = IPN)
+   IPN->id = '4aeca923-4f4c-49ec-a3af-73d3405bef47';
+   IPN->email('Thank you for your transaction!');
+
+   IPN->email(array(
+     'id' => '4aeca923-4f4c-49ec-a3af-73d3405bef47',
+     'subject' => 'Donation Complete!',
+     'message' => 'Thank you for your donation!',
+     'sendAs' => 'text'
+   ));
+
+  Hint: use this in your afterPaypalNotification callback in your app_controller.php
+   function afterPaypalNotification($txnId){
+     ClassRegistry::init('PaypalIpn.InstantPaymentNotification')->email(array(
+       'id' => $txnId,
+       'subject' => 'Thanks!',
+       'message' => 'Thank you for the transaction!'
+     ));
+   }
+
+ Options:
+   id: id of instant payment notification to base email off of
+   subject: subject of email (default: Thank you for your paypal transaction)
+   sendAs: html | text (default: html)
+   to: email address to send email to (default: ipn payer_email)
+   from: from email address (default: ipn business)
+   cc: array of email addresses to carbon copy to (default: array())
+   bcc: array of email addresses to blind carbon copy to (default: array())
+   layout: layout of email to send (default: default)
+   template: template of email to send (default: null)
+   log: boolean true | false if you'd like to log the email being sent. (default: true)
+   message: actual body of message to be sent (default: null)

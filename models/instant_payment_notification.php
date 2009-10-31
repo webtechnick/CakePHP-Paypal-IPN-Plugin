@@ -27,43 +27,80 @@ class InstantPaymentNotification extends PaypalIpnAppModel {
       return false;
     }
     
-    /****
+    /**************************************
       * Utility method to send basic emails based on a paypal IPN transaction.
       * This method is very basic, if you need something more complicated I suggest
       * creating your own method in the afterPaypalNotification function you build
       * in the app_controller.php
       *
-      * @param array $options of the ipn to send 
+      * Example Usage: (InstantPaymentNotification = IPN)
+      *   IPN->id = '4aeca923-4f4c-49ec-a3af-73d3405bef47';
+      *   IPN->email('Thank you for your transaction!');
+      *
+      *   IPN->email(array(
+      *     'id' => '4aeca923-4f4c-49ec-a3af-73d3405bef47',
+      *     'subject' => 'Donation Complete!',
+      *     'message' => 'Thank you for your donation!',
+      *     'sendAs' => 'text'
+      *   ));
+      *
+      *  Hint: use this in your afterPaypalNotification callback in your app_controller.php
+      *   function afterPaypalNotification($txnId){
+      *     ClassRegistry::init('PaypalIpn.InstantPaymentNotification')->email(array(
+      *       'id' => $txnId,
+      *       'subject' => 'Thanks!',
+      *       'message' => 'Thank you for the transaction!'
+      *     ));
+      *   }
+      *
+      * Options:
+      *   id: id of instant payment notification to base email off of
+      *   subject: subject of email (default: Thank you for your paypal transaction)
+      *   sendAs: html | text (default: html)
+      *   to: email address to send email to (default: ipn payer_email)
+      *   from: from email address (default: ipn business)
+      *   cc: array of email addresses to carbon copy to (default: array())
+      *   bcc: array of email addresses to blind carbon copy to (default: array())
+      *   layout: layout of email to send (default: default)
+      *   template: template of email to send (default: null)
+      *   log: boolean true | false if you'd like to log the email being sent. (default: true)
+      *   message: actual body of message to be sent (default: null)
+      *
+      * @param array $options of the ipn to send
+      *   
       */
     function email($options = array()){
-      if(isset($options['id'])) $this-> id = $options['id'];
+      if(!is_array($options)){
+        $message = $options;
+        $options = array();
+        $options['message'] = $message;
+      }
+      if(isset($options['id'])){
+        $this-> id = $options['id'];
+      }
+      
       $this->read();
       $defaults = array(
-        'subject' => 'Thank you for your payment',
+        'subject' => 'Thank you for your paypal transaction',
         'sendAs' => 'html',
         'to' => $this->data['InstantPaymentNotification']['payer_email'],
         'from' => $this->data['InstantPaymentNotification']['business'],
         'cc' => array(),
         'bcc' => array(),
         'layout' => 'default',
-        'template' => 'paypal_ipn_email',
+        'template' => null,
         'log' => true,
         'message' => null 
       );
       $options = array_merge($defaults, $options);
       
-      print_r($options);
+      //debug($options);
       if($options['log']){
         $this->log("Emailing: {$options['to']} through the PayPal IPN Plugin. ",'email');
       }
       
       App::import('Component','Email');
       $Email = new EmailComponent;
-      
-      App::import('Controller','PaypalIpn.InstantPaymentNotificationsController');
-      $IPN = new InstantPaymentNotificationsController;
-      
-      print_r($IPN);
       
       $Email->to = $options['to'];
       $Email->from = $options['from'];
@@ -74,7 +111,13 @@ class InstantPaymentNotification extends PaypalIpnAppModel {
       $Email->template = $options['template'];
       $Email->layout = $options['layout'];
       
-      ($options['message']) ? $Email->send($options['message']) : $Email->send();
+      //Send the message.
+      if($options['message']){
+        $Email->send($options['message']);
+      }
+      else{
+        $Email->send();
+      }
     }
 }
 ?>

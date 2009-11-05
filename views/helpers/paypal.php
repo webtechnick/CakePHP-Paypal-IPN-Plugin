@@ -180,9 +180,9 @@ class PaypalHelper extends AppHelper {
       if(isset($options['items']) && is_array($options['items'])){
         $count = 1;
         foreach($options['items'] as $item){
-          $options['item_name_'.$count] = $item['item_name'];
-          $options['amount_'.$count] = $item['amount'];
-          $options['quantity_'.$count] = isset($item['quantity']) ? $item['quantity'] : 1;
+          foreach($item as $key => $value){
+            $options[$key.'_'.$count] = $value;
+          }
           $count++;
         }
         unset($options['items']);

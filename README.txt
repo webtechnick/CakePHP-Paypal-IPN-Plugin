@@ -54,7 +54,7 @@ Paypal Button Helper: (optional) if you plan on using the paypal helper for your
          $paypal->button('Checkout', array(
            'type' => 'cart',
            'items' => array(
-             array('item_name' => 'Item 1', 'amount' => '120', 'quantity' => 2),
+             array('item_name' => 'Item 1', 'amount' => '120', 'quantity' => 2, 'item_number' => '1234'),
              array('item_name' => 'Item 2', 'amount' => '50'),
              array('item_name' => 'Item 3', 'amount' => '80', 'quantity' => 3),
            )

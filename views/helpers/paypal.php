@@ -1,9 +1,15 @@
 <?php
+/** Paypal Helper part of the PayPal IPN plugin.
+  *
+  * @author Nick Baker
+  * @link http://www.webtechnick.com
+  * @license MIT
+  */
 class PaypalHelper extends AppHelper {
   
   var $helpers = array('Html','Form');
 
-  /*********************
+  /**
     *  Setup the config based on the paypal_ipn_config in /plugins/paypal_ipn/config/paypal_ipn_config.php
     */
   function __construct(){
@@ -12,14 +18,11 @@ class PaypalHelper extends AppHelper {
     parent::__construct();  
   }
   
-  /********************
+  /**
     *  function button will create a complete form button to Pay Now, Donate, Add to Cart, or Subscribe using the paypal service.
     *  Configuration for the button is in /config/paypal_ip_config.php
     *  
-    * for this to work the option 
-'item_name' and 'amount' must be set in 
-the array options or default config 
-options.
+    *  for this to work the option 'item_name' and 'amount' must be set in the array options or default config options.
     *
     *  Example: 
     *     $paypal->button('Pay Now', array('amount' => '12.00', 'item_name' => 'test item'));
@@ -27,6 +30,14 @@ options.
     *     $paypal->button('Donate', array('type' => 'donate', 'amount' => '60.00'));
     *     $paypal->button('Add To Cart', array('type' => 'addtocart', 'amount' => '15.00'));
     *     $paypal->button('Unsubscribe', array('type' => 'unsubscribe'));
+    *     $paypal->button('Checkout', array(
+    *      'type' => 'cart',
+    *      'items' => array(
+    *         array('item_name' => 'Item 1', 'amount' => '120', 'quantity' => 2),
+    *         array('item_name' => 'Item 2', 'amount' => '50'),
+    *         array('item_name' => 'Item 3', 'amount' => '80', 'quantity' => 3),
+    *       )
+    *     ));
     *  Test Example:
     *     $paypal->button('Pay Now', array('test' => true, 'amount' => '12.00', 'item_name' => 'test item'));
     *
@@ -36,8 +47,7 @@ options.
     * 
     *   helper_options:  
     *      test: true|false switches default settings in /config/paypal_ipn_config.php between settings and testSettings
-    *      type: 'paynow', 'addtocart', 
-'donate' or 'subscribe' (default 'paynow')
+    *      type: 'paynow', 'addtocart', 'donate', 'unsubscribe', 'cart', or 'subscribe' (default 'paynow')
     *    
     *    You may pass in api name value pairs to be passed directly to the paypal form link.  Refer to paypal.com for a complete list.
     *    some paypal API examples: 
@@ -79,6 +89,12 @@ options.
         $options['alias'] = $options['business'];
         $default_title = 'Unsubscribe';
         break;
+      case 'cart': //upload cart
+        $options['cmd'] = '_cart';
+        $options['upload'] = 1;
+        $default_title = 'Checkout';
+        $options = $this->__uploadCartOptions($options);
+        break;
       default: //Pay Now
         $options['cmd'] = '_xclick';
         $default_title = 'Pay Now';
@@ -96,7 +112,7 @@ options.
     return $retval;
   }
   
-  /****
+  /**
    *  __hiddenNameValue constructs the name value pair in a hidden input html tag
    * @access private
    * @param String name is the name of the hidden html element.
@@ -108,7 +124,7 @@ options.
     return "<input type='hidden' name='$name' value='$value' />";
   }
   
-  /****
+  /**
    *  __submitButton constructs the submit button from the provided text
    * @param String text | text is the label of the submit button.  Can use plain text or image url.
    * @access private
@@ -118,7 +134,7 @@ options.
     return "</div>" . $this->Form->end(array('label' => $text));
   }
   
-  /*************
+  /**
     * __subscriptionOptions conversts human readable subscription terms 
     * into paypal terms if need be
     *  @access private
@@ -153,5 +169,25 @@ options.
     
     return $options;
   }
+  
+  /**
+    * __uploadCartOptions converts an array of items into paypal friendly name/value pairs
+    * @access private
+    * @param array of options that will be returned with proper paypal friendly name/value pairs for items
+    * @return array options
+    */
+    function __uploadCartOptions($options = array()){
+      if(isset($options['items']) && is_array($options['items'])){
+        $count = 1;
+        foreach($options['items'] as $item){
+          $options['item_name_'.$count] = $item['item_name'];
+          $options['amount_'.$count] = $item['amount'];
+          $options['quantity_'.$count] = isset($item['quantity']) ? $item['quantity'] : 1;
+          $count++;
+        }
+        unset($options['items']);
+      }
+      return $options;
+    }
 }
 ?>

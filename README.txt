@@ -1,5 +1,5 @@
 Paypal IPN plugin.  (Paypal Instant Payment Notification)
-Version 3.0
+Version 3.5
 Author: Nick Baker (nick@webtechnick.com)
 Website: http://www.webtechnick.com
 
@@ -15,6 +15,7 @@ CHANGELOG:
 2.2.1: Bug fix with subscription issues
 2.2.2: Fixed validation issues with paypal button in strict doctype
 3.0: Added new basic Paypal IPN email capabality.
+3.5 Added checkout feature for multiple items paypal button.  Documentation bellow
 
 Special thanks: Peter Butler <http://www.studiocanaria.com>
 
@@ -49,6 +50,15 @@ Paypal Button Helper: (optional) if you plan on using the paypal helper for your
          $paypal->button('Subscribe', array('type' => 'subscribe', 'amount' => '60.00', 'term' => 'month', 'period' => '2'));
          $paypal->button('Donate', array('type' => 'donate', 'amount' => '60.00'));
          $paypal->button('Add To Cart', array('type' => 'addtocart', 'amount' => '15.00'));
+         $paypal->button('Unsubscribe', array('type' => 'unsubscribe'));
+         $paypal->button('Checkout', array(
+           'type' => 'cart',
+           'items' => array(
+             array('item_name' => 'Item 1', 'amount' => '120', 'quantity' => 2),
+             array('item_name' => 'Item 2', 'amount' => '50'),
+             array('item_name' => 'Item 3', 'amount' => '80', 'quantity' => 3),
+           )
+         ));
        Test Example:
          $paypal->button('Pay Now', array('test' => true, 'amount' => '12.00', 'item_name' => 'test item'));
 

@@ -1,5 +1,5 @@
 <div class="instantPaymentNotifications view">
-<h2><?php  __('InstantPaymentNotification');?></h2>
+<h1><?php  __('InstantPaymentNotification');?></h1>
 	<dl><?php $i = 0; $class = ' class="altrow"';?>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Id'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
@@ -443,6 +443,36 @@
 		</dd>
 	</dl>
 </div>
+
+<?php if(isset($instantPaymentNotification['PaypalItem']) && count($instantPaymentNotification['PaypalItem']) > 0): ?>
+<div class="related">
+  <a name="related"></a>
+  <h1>Related Items</h1>
+  <table cellpadding = "0" cellspacing = "0" width="100%">
+    <tr>
+      <th>Item Name</th>
+      <th>Item Number</th>
+      <th>Quantity</th>
+      <th>Amount</th>
+      <th>Actions</th>
+    </tr>
+  <?php foreach($instantPaymentNotification['PaypalItem'] as $item): ?>
+    <tr>
+      <td><?php echo $item['item_name']; ?></td>
+      <td><?php echo $item['item_number']; ?></td>
+      <td><?php echo $item['quantity']; ?></td>
+      <td><?php echo $item['mc_gross']; ?></td>
+      <td>
+        <?php echo $html->link('View', array('admin' => true, 'plugin' => 'paypal_ipn', 'controller' => 'paypal_items', 'action' => 'view', 'id' => $item['id']));  ?>
+        <?php echo $html->link('Edit', array('admin' => true, 'plugin' => 'paypal_ipn', 'controller' => 'paypal_items', 'action' => 'edit', 'id' => $item['id']));  ?>
+        <?php echo $html->link('Delete', array('admin' => true, 'plugin' => 'paypal_ipn', 'controller' => 'paypal_items', 'action' => 'delete', 'id' => $item['id']), null, "Are you sure?");  ?>
+      </td>
+    </tr>
+  <?php endforeach; ?>
+  </table>
+</div>
+<?php endif; ?>
+
 <div class="actions">
 	<ul>
 		<li><?php echo $html->link(__('Edit InstantPaymentNotification', true), array('action' => 'edit', $instantPaymentNotification['InstantPaymentNotification']['id'])); ?> </li>

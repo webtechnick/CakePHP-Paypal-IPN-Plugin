@@ -1,5 +1,5 @@
 <div class="instantPaymentNotifications index">
-<h2><?php __('InstantPaymentNotifications');?></h2>
+<h1><?php __('InstantPaymentNotifications');?></h1>
 <p>
 <?php
 echo $paginator->counter(array(

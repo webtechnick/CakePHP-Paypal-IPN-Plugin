@@ -1,7 +1,7 @@
 <div class="instantPaymentNotifications form">
+<h1>Add/Edit Instant Payment Notification</h1>
 <?php echo $form->create('InstantPaymentNotification');?>
 	<fieldset>
- 		<legend><?php __('Edit/Add InstantPaymentNotification');?></legend>
 	<?php
 		echo $form->input('id');
 		echo $form->input('notify_version');

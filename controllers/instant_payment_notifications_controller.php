@@ -24,9 +24,17 @@ class InstantPaymentNotificationsController extends PaypalIpnAppController {
 	  */
 	function process(){
 	  if($this->InstantPaymentNotification->isValid($_POST)){
-      $notification = array();
+      /*$notification = array();
       $notification['InstantPaymentNotification'] = $_POST;
-      $this->InstantPaymentNotification->save($notification);
+      $logval = "";
+      foreach($notification['InstantPaymentNotification'] as $key => $data){
+        $logval .= $key . " = " . $data . "\n";
+      }
+      $this->log($logval, 'debug');*/
+      
+      
+      $notification = $this->InstantPaymentNotification->buildAssociationsFromIPN($_POST);
+      $this->InstantPaymentNotification->saveAll($notification);
       $this->__processTransaction($this->InstantPaymentNotification->id);
 	  }
 	  $this->redirect('/');
@@ -43,11 +51,11 @@ class InstantPaymentNotificationsController extends PaypalIpnAppController {
     $this->afterPaypalNotification($txnId);
   }
 	
-	/****************************
+	/**
 	  * Admin Only Functions... all baked
 	  */
 	
-	/**********
+	/**
 	  * Admin Index
 	  */
 	function admin_index() {	  
@@ -55,7 +63,7 @@ class InstantPaymentNotificationsController extends PaypalIpnAppController {
 		$this->set('instantPaymentNotifications', $this->paginate());
 	}
 
-	/**********
+	/**
 	  * Admin View
 	  * @param String ID of the transaction to view
 	  */
@@ -67,14 +75,14 @@ class InstantPaymentNotificationsController extends PaypalIpnAppController {
 		$this->set('instantPaymentNotification', $this->InstantPaymentNotification->read(null, $id));
 	}
 	
-	/**********
+	/**
 	  * Admin Add
 	  */
 	function admin_add(){
 	   $this->redirect(array('admin' => true, 'action' => 'edit')); 
 	}
 
-	/**********
+	/**
 	  * Admin Edit
 	  * @param String ID of the transaction to edit
 	  */
@@ -92,7 +100,7 @@ class InstantPaymentNotificationsController extends PaypalIpnAppController {
 		}
 	}
 
-	/**********
+	/**
 	  * Admin Delete
 	  * @param String ID of the transaction to delete
 	  */

@@ -8,12 +8,17 @@ class InstantPaymentNotification extends PaypalIpnAppModel {
      */
     var $name = 'InstantPaymentNotification';
     
-    /*******************
+    var $hasMany = array(
+      'PaypalItem' => array(
+        'className' => 'PaypalIpn.PaypalItem'
+      )
+    );
+    /**
       * the PaypalSource
       */
     var $paypal = null;
     
-    /************************
+    /**
       * verifies POST data given by the paypal instant payment notification
       * @param array $data Most likely directly $_POST given by the controller.
       * @return boolean true | false depending on if data received is actually valid from paypal and not from some script monkey
@@ -27,7 +32,7 @@ class InstantPaymentNotification extends PaypalIpnAppModel {
       return false;
     }
     
-    /**************************************
+    /**
       * Utility method to send basic emails based on a paypal IPN transaction.
       * This method is very basic, if you need something more complicated I suggest
       * creating your own method in the afterPaypalNotification function you build
@@ -119,5 +124,31 @@ class InstantPaymentNotification extends PaypalIpnAppModel {
         $Email->send();
       }
     }
+    
+    /**
+      * builds the associative array for paypalitems only if it was a cart upload
+      *
+      * @param raw post data sent back from paypal
+      * @return array of cakePHP friendly association array.
+      */
+    function buildAssociationsFromIPN($post){
+      $retval = array();
+      $retval['InstantPaymentNotification'] = $post;
+      if(isset($post['num_cart_items']) && $post['num_cart_items'] > 0){
+        $retval['PaypalItem'] = array();
+        for($i=1;$i<=$post['num_cart_items'];$i++){
+          $retval['PaypalItem'][$i]['item_name'] = $post["item_name$i"];
+          $retval['PaypalItem'][$i]['item_number'] = $post["item_number$i"];
+          $retval['PaypalItem'][$i]['item_number'] = $post["item_number$i"];
+          $retval['PaypalItem'][$i]['quantity'] = $post["quantity$i"];
+          $retval['PaypalItem'][$i]['mc_shipping'] = $post["mc_shipping$i"];
+          $retval['PaypalItem'][$i]['mc_handling'] = $post["mc_handling$i"];
+          $retval['PaypalItem'][$i]['mc_gross'] = $post["mc_gross_$i"];
+          $retval['PaypalItem'][$i]['tax'] = $post["tax$i"];
+        }
+      }
+      return $retval;
+    }
+    
 }
 ?>

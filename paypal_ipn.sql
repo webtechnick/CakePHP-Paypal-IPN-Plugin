@@ -89,3 +89,24 @@ CREATE TABLE instant_payment_notifications (
   modified datetime default NULL,
   PRIMARY KEY  (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `paypal_items`
+--
+
+CREATE TABLE `paypal_items` (
+  `id` varchar(36) NOT NULL,
+  `instant_payment_notification_id` varchar(36) NOT NULL,
+  `item_name` varchar(127) default NULL,
+  `item_number` varchar(127) default NULL,
+  `quantity` varchar(127) default NULL,
+  `mc_gross` float(10,2) default NULL,
+  `mc_shipping` float(10,2) default NULL,
+  `mc_handling` float(10,2) default NULL,
+  `tax` float(10,2) default NULL,
+  `created` datetime NOT NULL,
+  `modified` datetime NOT NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;

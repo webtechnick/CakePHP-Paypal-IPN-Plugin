@@ -19,6 +19,11 @@ CHANGELOG:
 
 Special thanks: Peter Butler <http://www.studiocanaria.com>
 
+Migration Guide from 3.0 to 3.5:
+  open a terminal and execute the following command:
+  
+  cake schema run create -path plugins/paypal_ipn/config/sql -name items
+
 Install:
 1) Copy plugin into your /app/plugins/paypal_ipn directory
 2a) Run the paypal_ipn.sql into your database.

@@ -1,5 +1,5 @@
 Paypal IPN plugin.  (Paypal Instant Payment Notification)
-Version 3.5
+Version 3.5.1
 Author: Nick Baker (nick@webtechnick.com)
 Website: http://www.webtechnick.com
 
@@ -16,6 +16,7 @@ CHANGELOG:
 2.2.2: Fixed validation issues with paypal button in strict doctype
 3.0: Added new basic Paypal IPN email capabality.
 3.5 Added checkout feature for multiple items paypal button.  Documentation bellow
+3.5.1: Renamed columns option_name_1 and option_name_2 to option_name1 and option_name2 respectively
 
 Special thanks: Peter Butler <http://www.studiocanaria.com>
 

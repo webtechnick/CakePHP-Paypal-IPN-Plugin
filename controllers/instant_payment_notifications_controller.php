@@ -12,6 +12,9 @@ class InstantPaymentNotificationsController extends PaypalIpnAppController {
 	function beforeFilter(){
 	  parent::beforeFilter();
 	  $this->Auth->allow('process');
+	  if(isset($this->Security) && $this->action == 'process'){
+	    $this->Security->validatePost = false;
+	  }
 	}
 	
 	/*****************
@@ -24,15 +27,6 @@ class InstantPaymentNotificationsController extends PaypalIpnAppController {
 	  */
 	function process(){
 	  if($this->InstantPaymentNotification->isValid($_POST)){
-      /*$notification = array();
-      $notification['InstantPaymentNotification'] = $_POST;
-      $logval = "";
-      foreach($notification['InstantPaymentNotification'] as $key => $data){
-        $logval .= $key . " = " . $data . "\n";
-      }
-      $this->log($logval, 'debug');*/
-      
-      
       $notification = $this->InstantPaymentNotification->buildAssociationsFromIPN($_POST);
       $this->InstantPaymentNotification->saveAll($notification);
       $this->__processTransaction($this->InstantPaymentNotification->id);

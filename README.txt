@@ -5,7 +5,7 @@ Website: http://www.webtechnick.com
 
 Get it
 ======================
-Download: http://projects.webtechnick.com/paypal_ipn
+Download: http://projects.webtechnick.com/paypal_ipn.tar.gz
 SVN: http://svn.github.com/webtechnick/CakePHP-Paypal-IPN-Plugin
 GIT: git@github.com:webtechnick/CakePHP-Paypal-IPN-Plugin.git
 

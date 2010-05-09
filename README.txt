@@ -3,10 +3,18 @@ Version 3.5.1
 Author: Nick Baker (nick@webtechnick.com)
 Website: http://www.webtechnick.com
 
-Browse/Download: http://projects.webtechnick.com/paypal_ipn
-SVN: http://svn2.xp-dev.com/svn/nurvzy-paypal-ipn
+Get it
+======================
+Download: http://projects.webtechnick.com/paypal_ipn
+SVN: http://svn.github.com/webtechnick/CakePHP-Paypal-IPN-Plugin
+GIT: git@github.com:webtechnick/CakePHP-Paypal-IPN-Plugin.git
+
+More From WebTechNick
+======================
+http://github.com/webtechnick
 
 CHANGELOG:
+======================
 1.0: Initial release
 1.1: Added cleaner routes
 2.0: Helper added
@@ -21,11 +29,13 @@ CHANGELOG:
 Special thanks: Peter Butler <http://www.studiocanaria.com>
 
 Migration Guide from 3.0 to 3.5:
+======================
   open a terminal and execute the following command:
   
   cake schema run create -path plugins/paypal_ipn/config/sql -name items
 
 Install:
+======================
 1) Copy plugin into your /app/plugins/paypal_ipn directory
 2a) Run the paypal_ipn.sql into your database.
 2b) run "cake schema run create -path plugins/paypal_ipn/config/sql -name ipn" in a terminal.
@@ -37,15 +47,18 @@ Install:
   /* End Paypal IPN plugin */
   
 Paypal Setup:
+======================
 1) I suggest you start a sandbox account at https://developer.paypal.com
 2) Enable IPN in your account.
   
 Administration: (optional) If you want to use the built in admin access to IPNs:
+======================
 1) Make sure you're logged in as an Administrator via the Auth component.
 2) Navigate to www.yoursite.com/paypal_ipn
 
 
 Paypal Button Helper: (optional) if you plan on using the paypal helper for your PayNow or Subscribe Buttons
+======================
 1) Update /paypal_ipn/config/paypal_ipn_config.php with your paypal information
 2) Add 'PaypalIpn.Paypal' to your helpers list in app_controller.php:
        var $helpers = array('Html','Form','PaypalIpn.Paypal');
@@ -69,6 +82,7 @@ Paypal Button Helper: (optional) if you plan on using the paypal helper for your
          $paypal->button('Pay Now', array('test' => true, 'amount' => '12.00', 'item_name' => 'test item'));
 
 Paypal Button:
+======================
 1) Use the PaypalHelper to generate your buttons for you. See Paypal Button Helper (above) for more.
  - or -
 1) Make sure to use notify_url set to "http://www.yoursite.com/paypal_ipn/process" in your paypal button.
@@ -82,6 +96,7 @@ Example:
 
 
 Paypal Notification Callback:
+======================
 1) create a function in your /app/app_controller.php like so:
 
   function afterPaypalNotification($txnId){
@@ -104,6 +119,7 @@ Paypal Notification Callback:
   } 
   
 Basic Email Feature:
+======================
  Utility method to send basic emails based on a paypal IPN transaction.
  This method is very basic, if you need something more complicated I suggest
  creating your own method in the afterPaypalNotification function you build
@@ -129,15 +145,15 @@ Basic Email Feature:
      ));
    }
 
- Options:
-   id: id of instant payment notification to base email off of
-   subject: subject of email (default: Thank you for your paypal transaction)
-   sendAs: html | text (default: html)
-   to: email address to send email to (default: ipn payer_email)
-   from: from email address (default: ipn business)
-   cc: array of email addresses to carbon copy to (default: array())
-   bcc: array of email addresses to blind carbon copy to (default: array())
-   layout: layout of email to send (default: default)
-   template: template of email to send (default: null)
-   log: boolean true | false if you'd like to log the email being sent. (default: true)
-   message: actual body of message to be sent (default: null)
+ Email Options:
+   * id: id of instant payment notification to base email off of
+   * subject: subject of email (default: Thank you for your paypal transaction)
+   * sendAs: html | text (default: html)
+   * to: email address to send email to (default: ipn payer_email)
+   * from: from email address (default: ipn business)
+   * cc: array of email addresses to carbon copy to (default: array())
+   * bcc: array of email addresses to blind carbon copy to (default: array())
+   * layout: layout of email to send (default: default)
+   * template: template of email to send (default: null)
+   * log: boolean true | false if you'd like to log the email being sent. (default: true)
+   * message: actual body of message to be sent (default: null)

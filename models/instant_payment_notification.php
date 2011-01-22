@@ -134,7 +134,7 @@ class InstantPaymentNotification extends PaypalIpnAppModel {
     function buildAssociationsFromIPN($post){
       $retval = array();
       $retval['InstantPaymentNotification'] = $post;
-      if(isset($post['num_cart_items']) && $post['num_cart_items'] > 1){
+      if(isset($post['num_cart_items']) && $post['num_cart_items'] >= 1){
         $retval['PaypalItem'] = array();
         for($i=1;$i<=$post['num_cart_items'];$i++){
           $retval['PaypalItem'][$i]['item_name'] = $post["item_name$i"];

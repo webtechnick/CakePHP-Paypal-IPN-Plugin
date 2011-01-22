@@ -42,7 +42,7 @@ class PaypalItemsController extends PaypalIpnAppController {
 			$this->Session->setFlash(__('Invalid id for PaypalItem', true));
 			$this->redirect(array('action'=>'index'));
 		}
-		if ($this->PaypalItem->del($id)) {
+		if ($this->PaypalItem->delete($id)) {
 			$this->Session->setFlash(__('PaypalItem deleted', true));
 			$this->redirect(array('action'=>'index'));
 		}

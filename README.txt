@@ -1,12 +1,11 @@
 Paypal IPN plugin.  (Paypal Instant Payment Notification)
-Version 3.5.1
+Version 3.5.2
 Author: Nick Baker (nick@webtechnick.com)
 Website: http://www.webtechnick.com
 
 Get it
 ======================
 Download: http://projects.webtechnick.com/paypal_ipn.tar.gz
-SVN: http://svn.github.com/webtechnick/CakePHP-Paypal-IPN-Plugin
 GIT: git@github.com:webtechnick/CakePHP-Paypal-IPN-Plugin.git
 
 Required:
@@ -29,6 +28,7 @@ CHANGELOG:
 3.0: Added new basic Paypal IPN email capabality.
 3.5 Added checkout feature for multiple items paypal button.  Documentation bellow
 3.5.1: Renamed columns option_name_1 and option_name_2 to option_name1 and option_name2 respectively
+3.5.2: Updating to latest conventions in CakePHP 1.3, no longer requires Auth, all cart items will be reviewable in paypal_items table
 
 Special thanks: Peter Butler <http://www.studiocanaria.com>
 

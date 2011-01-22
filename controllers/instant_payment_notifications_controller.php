@@ -3,21 +3,23 @@ class InstantPaymentNotificationsController extends PaypalIpnAppController {
 
 	var $name = 'InstantPaymentNotifications';
 	var $helpers = array('Html', 'Form');
-	var $components = array('Auth','Email');
+	var $components = array('Email');
 	
-	/************
+	/**
 	  * beforeFilter makes sure the process is allowed by auth
 	  *  since paypal will need direct access to it.
 	  */
 	function beforeFilter(){
 	  parent::beforeFilter();
-	  $this->Auth->allow('process');
+	  if(isset($this->Auth)){
+	  	$this->Auth->allow('process');
+	  }
 	  if(isset($this->Security) && $this->action == 'process'){
 	    $this->Security->validatePost = false;
 	  }
 	}
 	
-	/*****************
+	/**
 	  * Paypal IPN processing action..
 	  * This action is the intake for a paypal_ipn callback performed by paypal itself.
 	  * This action will take the paypal callback, verify it (so trickery) and save the transaction into your database for later review
@@ -34,7 +36,7 @@ class InstantPaymentNotificationsController extends PaypalIpnAppController {
 	  $this->redirect('/');
   }
   
-  /*************************
+  /**
     * __processTransaction is a private callback function used to log a verified transaction
     * @access private
     * @param String $txnId is the string paypal ID and the id used in your database.
@@ -103,7 +105,7 @@ class InstantPaymentNotificationsController extends PaypalIpnAppController {
 			$this->Session->setFlash(__('Invalid id for InstantPaymentNotification', true));
 			$this->redirect(array('action'=>'index'));
 		}
-		if ($this->InstantPaymentNotification->del($id)) {
+		if ($this->InstantPaymentNotification->delete($id)) {
 			$this->Session->setFlash(__('InstantPaymentNotification deleted', true));
 			$this->redirect(array('action'=>'index'));
 		}

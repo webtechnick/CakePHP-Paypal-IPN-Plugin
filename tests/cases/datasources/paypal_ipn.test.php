@@ -1,13 +1,17 @@
 <?php
 App::import('Datsource', 'PayplIpn.PaypalIpnSource');
 App::import('Core', 'HttpSocket');
-Mock::generatePartial('HttpSocket');
 class PaypalIpnTestCase extends CakeTestCase {
   var $PaypalIpn = null;
   
   function startTest(){
+  	Mock::generatePartial('HttpSocket', 'MockHttpSocket', array('post'));
   	$this->PaypalIpn = new PaypalIpnSource(array());
     $this->PaypalIpn->Http = new MockHttpSocket();
+  }
+  
+  function testIsValidShouldBeFalse(){
+  	$this->assertFalse($this->PaypalIpn->isValid(array()));
   }
   
   function testIsValid(){
@@ -22,8 +26,8 @@ class PaypalIpnTestCase extends CakeTestCase {
     		'cmd' => '_notify-validate'
     	)
     ));
-    $this->PaypalIpn->Http->setReturnValue('post', 'VERIFIED');
     
+    $this->PaypalIpn->Http->setReturnValue('post', 'VERIFIED');
     $this->assertTrue($this->PaypalIpn->isValid($data));
   }
   

@@ -3,14 +3,14 @@ App::import('Core', array('HttpSocket'));
 
 class PaypalIpnSource extends DataSource {
   
-  /********
+  /**
     * Http is the HttpSocket Object.
     * @access public
     * @var object
     */
   var $Http = null;
   
-  /********
+  /**
     * constructer.  Load the HttpSocket into the Http var.
     */
   function __construct(){
@@ -32,8 +32,6 @@ class PaypalIpnSource extends DataSource {
     * @return boolean true | false depending on if data received is actually valid from paypal and not from some script monkey
     */
   function isValid($data){
-    $this->Http =& new HttpSocket();
-        
     $data['cmd'] = '_notify-validate';
     
     $data = array_map(array('PaypalIpnSource', 'clearSlash'), $data);

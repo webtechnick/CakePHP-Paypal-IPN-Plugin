@@ -13,8 +13,15 @@ class PaypalHelper extends AppHelper {
     *  Setup the config based on the paypal_ipn_config in /plugins/paypal_ipn/config/paypal_ipn_config.php
     */
   function __construct(){
-    App::import(array('type' => 'File', 'name' => 'PaypalIpn.PaypalIpnConfig', 'file' => 'config'.DS.'paypal_ipn_config.php'));
-    $this->config =& new PaypalIpnConfig();
+    if(App::import(array('type' => 'File', 'name' => 'PaypalIpn.PaypalIpnConfig', 'file' => CONFIGS .'paypal_ipn_config.php'))){
+    	$this->config =& new PaypalIpnConfig();
+    }
+    else {
+    	//Import from paypal plugin configuration
+    	App::import(array('type' => 'File', 'name' => 'PaypalIpn.PaypalIpnConfig', 'file' => 'config'.DS.'paypal_ipn_config.php'));
+    	$this->config =& new PaypalIpnConfig();
+    }
+    
     parent::__construct();  
   }
   

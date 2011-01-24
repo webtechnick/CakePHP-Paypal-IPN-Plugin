@@ -115,7 +115,7 @@ class PaypalHelper extends AppHelper {
     }
     
     $title = (empty($title)) ? $default_title : $title;
-    $retval = "<form action='{$options['server']}/cgi-bin/webscr' method='post'><div>";
+    $retval = "<form action='{$options['server']}/cgi-bin/webscr' method='post'><div class='paypal-form'>";
     unset($options['server']);
     foreach($options as $name => $value){
        $retval .= $this->__hiddenNameValue($name, $value);

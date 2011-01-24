@@ -34,7 +34,7 @@ open a terminal and execute the following command:
 	$ cake schema create -path plugins/paypal_ipn/config/sql -name items
 
 # Install:
-1. Copy plugin into your /app/plugins/paypal_ipn directory
+1. Copy plugin into your `/app/plugins/paypal_ipn` directory
 2. Run
 
 		$ cake schema create -path plugins/paypal_ipn/config/sql -name ipn
@@ -53,12 +53,12 @@ open a terminal and execute the following command:
   
 # Administration: (optional) If you want to use the built in admin access to IPNs:
 1. Make sure you're logged in as an Administrator via the Auth component.
-2. Navigate to www.yoursite.com/paypal_ipn
+2. Navigate to `www.yoursite.com/paypal_ipn`
 
 
 # Paypal Button Helper: (optional) if you plan on using the paypal helper for your PayNow or Subscribe Buttons
-1. Update /paypal_ipn/config/paypal_ipn_config.php with your paypal information
-2. Add 'PaypalIpn.Paypal' to your helpers list in app_controller.php:
+1. Update `/paypal_ipn/config/paypal_ipn_config.php` with your paypal information
+2. Add `PaypalIpn.Paypal` to your helpers list in `app_controller.php`
 
 	var $helpers = array('Html','Form','PaypalIpn.Paypal');
 	
@@ -85,11 +85,12 @@ open a terminal and execute the following command:
        
 ## Alternatively to Paypal Helper 
 Instead of the Paypal Helper you can use your custom buttons but make sure to set notify_url to your configured route.
-		<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
-  		...
-  		<input type="hidden" name="notify_url" value="http://www.yoursite.com/paypal_ipn/process" />
-  		...
-  	</form>
+
+	<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+		...
+		<input type="hidden" name="notify_url" value="http://www.yoursite.com/paypal_ipn/process" />
+		...
+	</form>
 
 It is generally recommened to use the paypal helper as it will generate everything for you based on your configurations
 
@@ -119,12 +120,13 @@ Create a function in your `/app/app_controller.php` like so:
 Utility method to send basic emails based on a paypal IPN transaction.
 This method is very basic, if you need something more complicated I suggest
 creating your own method in the afterPaypalNotification function you build
-in the app_controller.php
+in the `app_controller.php`
 
 	$IPN = ClassRegistry::init('PaypalIpn.InstantPaymentNotification');
 	$IPN->id = '4aeca923-4f4c-49ec-a3af-73d3405bef47';
 	$IPN->email('Thank you for your transaction!');
-
+	
+	//OR passed in as an array of options
 	$IPN->email(array(
 		'id' => '4aeca923-4f4c-49ec-a3af-73d3405bef47',
 		'subject' => 'Donation Complete!',

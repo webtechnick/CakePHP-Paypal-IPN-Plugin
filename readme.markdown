@@ -1,7 +1,7 @@
-Paypal IPN plugin.  (Paypal Instant Payment Notification)
-Version 3.5.2
-Author: Nick Baker (nick@webtechnick.com)
-Website: http://www.webtechnick.com
+# Paypal IPN plugin  (Paypal Instant Payment Notification)
+* Version 3.6.0
+* Author: Nick Baker (nick@webtechnick.com)
+* Website: http://www.webtechnick.com
 
 # Get it
 * Download: http://projects.webtechnick.com/paypal_ipn.tar.gz

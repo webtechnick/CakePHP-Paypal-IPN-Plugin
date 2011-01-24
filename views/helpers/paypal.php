@@ -36,6 +36,7 @@ class PaypalHelper extends AppHelper {
     *     $paypal->button('Subscribe', array('type' => 'subscribe', 'amount' => '60.00', 'term' => 'month', 'period' => '2'));
     *     $paypal->button('Donate', array('type' => 'donate', 'amount' => '60.00'));
     *     $paypal->button('Add To Cart', array('type' => 'addtocart', 'amount' => '15.00'));
+    *     $paypal->button('View Cart', array('type' => 'viewcart'));
     *     $paypal->button('Unsubscribe', array('type' => 'unsubscribe'));
     *     $paypal->button('Checkout', array(
     *      'type' => 'cart',
@@ -87,6 +88,11 @@ class PaypalHelper extends AppHelper {
         $options['add'] = '1';
         $default_title = 'Add To Cart';
         break;
+      case 'viewcart': //View Cart
+      	$options['cmd'] = '_cart';
+      	$options['display'] = '1';
+      	$default_title = 'View Cart';
+      	break;
       case 'donate': //Doante
         $options['cmd'] = '_donations';
         $default_title = 'Donate';

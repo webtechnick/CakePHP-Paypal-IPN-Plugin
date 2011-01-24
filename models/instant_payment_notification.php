@@ -134,17 +134,18 @@ class InstantPaymentNotification extends PaypalIpnAppModel {
     function buildAssociationsFromIPN($post){
       $retval = array();
       $retval['InstantPaymentNotification'] = $post;
-      if(isset($post['num_cart_items']) && $post['num_cart_items'] >= 1){
+      if(isset($post['num_cart_items']) && $post['num_cart_items'] > 0){
         $retval['PaypalItem'] = array();
         for($i=1;$i<=$post['num_cart_items'];$i++){
-          $retval['PaypalItem'][$i]['item_name'] = $post["item_name$i"];
-          $retval['PaypalItem'][$i]['item_number'] = $post["item_number$i"];
-          $retval['PaypalItem'][$i]['item_number'] = $post["item_number$i"];
-          $retval['PaypalItem'][$i]['quantity'] = $post["quantity$i"];
-          $retval['PaypalItem'][$i]['mc_shipping'] = $post["mc_shipping$i"];
-          $retval['PaypalItem'][$i]['mc_handling'] = $post["mc_handling$i"];
-          $retval['PaypalItem'][$i]['mc_gross'] = $post["mc_gross_$i"];
-          $retval['PaypalItem'][$i]['tax'] = $post["tax$i"];
+        	$key = $i - 1;
+          $retval['PaypalItem'][$key]['item_name'] = $post["item_name$i"];
+          $retval['PaypalItem'][$key]['item_number'] = $post["item_number$i"];
+          $retval['PaypalItem'][$key]['item_number'] = $post["item_number$i"];
+          $retval['PaypalItem'][$key]['quantity'] = $post["quantity$i"];
+          $retval['PaypalItem'][$key]['mc_shipping'] = $post["mc_shipping$i"];
+          $retval['PaypalItem'][$key]['mc_handling'] = $post["mc_handling$i"];
+          $retval['PaypalItem'][$key]['mc_gross'] = $post["mc_gross_$i"];
+          $retval['PaypalItem'][$key]['tax'] = $post["tax$i"];
         }
       }
       return $retval;

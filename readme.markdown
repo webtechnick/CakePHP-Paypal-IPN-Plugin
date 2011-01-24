@@ -35,14 +35,17 @@ open a terminal and execute the following command:
 
 # Install:
 1. Copy plugin into your /app/plugins/paypal_ipn directory
-2. Run 
-	$ cake schema create -path plugins/paypal_ipn/config/sql -name ipn
+2. Run
+
+		$ cake schema create -path plugins/paypal_ipn/config/sql -name ipn
+		
 3. Add the following into your /app/config/routes.php file (optional):
-	/* Paypal IPN plugin */
-	Router::connect('/paypal_ipn/process', array('plugin' => 'paypal_ipn', 'controller' => 'instant_payment_notifications', 'action' => 'process'));
-	/* Optional Route, but nice for administration */
-	Router::connect('/paypal_ipn/:action/*', array('admin' => 'true', 'plugin' => 'paypal_ipn', 'controller' => 'instant_payment_notifications', 'action' => 'index'));
-	/* End Paypal IPN plugin */
+
+		/* Paypal IPN plugin */
+		Router::connect('/paypal_ipn/process', array('plugin' => 'paypal_ipn', 'controller' => 'instant_payment_notifications', 'action' => 'process'));
+		/* Optional Route, but nice for administration */
+		Router::connect('/paypal_ipn/:action/*', array('admin' => 'true', 'plugin' => 'paypal_ipn', 'controller' => 'instant_payment_notifications', 'action' => 'index'));
+		/* End Paypal IPN plugin */
   
 # Paypal Setup:
 1. I suggest you start a sandbox account at https://developer.paypal.com
@@ -54,8 +57,8 @@ open a terminal and execute the following command:
 
 
 # Paypal Button Helper: (optional) if you plan on using the paypal helper for your PayNow or Subscribe Buttons
-1 Update /paypal_ipn/config/paypal_ipn_config.php with your paypal information
-2 Add 'PaypalIpn.Paypal' to your helpers list in app_controller.php:
+1. Update /paypal_ipn/config/paypal_ipn_config.php with your paypal information
+2. Add 'PaypalIpn.Paypal' to your helpers list in app_controller.php:
 
 	var $helpers = array('Html','Form','PaypalIpn.Paypal');
 	
@@ -82,11 +85,11 @@ open a terminal and execute the following command:
        
 ## Alternatively to Paypal Helper 
 Instead of the Paypal Helper you can use your custom buttons but make sure to set notify_url to your configured route.
-	<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
-  	...
-  	<input type="hidden" name="notify_url" value="http://www.yoursite.com/paypal_ipn/process" />
-  	...
-  </form>
+		<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+  		...
+  		<input type="hidden" name="notify_url" value="http://www.yoursite.com/paypal_ipn/process" />
+  		...
+  	</form>
 
 It is generally recommened to use the paypal helper as it will generate everything for you based on your configurations
 

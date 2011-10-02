@@ -12,6 +12,8 @@ class PaypalHelper extends AppHelper {
 
 	var $config = array();
 
+	var $encryption = array();
+
 /**
  * Setup the config based on either the Configure::read() values
  * or the PaypalIpnConfig in config/paypal_ipn_config.php
@@ -50,7 +52,12 @@ class PaypalHelper extends AppHelper {
 
 			$vars = get_object_vars($config);
 			foreach ($vars as $property => $configuration) {
-				$this->config[$property] = $configuration;
+				if (strpos($property, 'encryption_') === 0) {
+					$name = substr($property, 11);
+					$this->encryption[$name] = $configuration;
+				} else {
+					$this->config[$property] = $configuration;
+				}
 			}
 		}
 		parent::__construct();
@@ -90,9 +97,9 @@ class PaypalHelper extends AppHelper {
  *
  * You may pass in api name value pairs to be passed directly to the paypal
  * form link. Refer to paypal.com for a complete list. Some Paypal API examples:
- *   amount: float value
- *   notify_url: string url
- *   item_name: string name of product.
+ *   float amount      - value
+ *   string notify_url - url
+ *   string item_name  - name of product.
  */
 	function button($title, $options = array(), $buttonOptions = array()) {
 		if (is_array($title)) {
@@ -101,16 +108,25 @@ class PaypalHelper extends AppHelper {
 		} else if (empty($buttonOptions['label'])) {
 			$buttonOptions['label'] = $title;
 		}
+
+		$encryption = false;
 		if (!empty($options['test'])) {
 			if ($options['test'] === true) {
 				$defaults = $this->config['test'];
+				$encryption = 'test';
 			} elseif (is_array($options['test'])) {
 				$defaults = $options['test'];
+				if (isset($options['_encryption'])) {
+					$encryption = $options['_encryption'];
+					unset($options['_encryption']);
+				}
 			} else {
 				$defaults = $this->config[$options['test']];
+				$encryption = $options['test'];
 			}
 		} else {
 			$defaults = $this->config['default'];
+			$encryption = 'default';
 		}
 
 		$options = array_merge($defaults, $options);
@@ -166,9 +182,26 @@ class PaypalHelper extends AppHelper {
 		}
 		$retval = "<form action='{$options['server']}/cgi-bin/webscr' method='post'><div class='paypal-form'>";
 		unset($options['server']);
-		foreach ($options as $name => $value) {
-			 $retval .= $this->__hiddenNameValue($name, $value);
+
+		$encryptedFields = false;
+		if (!empty($options['encrypt']) && $encryption) {
+			if (is_string($encryption) && isset($this->encryption[$encryption])) {
+				$encryption = $this->encryption[$encryption];
+			}
+
+			if (is_array($encryption)) {
+				$encryptedFields = $this->__encryptFields($options, $encryption);
+			}
 		}
+
+		if ($encryptedFields === false) {
+			foreach ($options as $name => $value) {
+				$retval .= $this->__hiddenNameValue($name, $value);
+			}
+		} else {
+			$retval .= $encryptedFields;
+		}
+
 		$retval .= $this->__submitButton($buttonOptions);
 
 		return $retval;
@@ -176,11 +209,63 @@ class PaypalHelper extends AppHelper {
 
 /**
  * Constructs the name value pair in a hidden input html tag
- * @access private
- * @param String name is the name of the hidden html element.
- * @param String value is the value of the hidden html element.
- * @access private
- * @return Html form button and close form
+ *
+ * @param array hold key/value options of paypal button.
+ * @return String hidden encrypted fields
+ */
+	function __encryptFields($options, $encryption) {
+		if (!file_exists($encryption['key_file'])) {
+			$this->log("ERROR: MY_KEY_FILE {$encryption['key_file']} not found\n");
+			return false;
+		}
+		if (!file_exists($encryption['cert_file'])) {
+			$this->log("ERROR: MY_CERT_FILE {$encryption['cert_file']} not found\n");
+			return false;
+		}
+		if (!file_exists($encryption['paypal_cert_file'])) {
+			$this->log("ERROR: PAYPAL_CERT_FILE {$encryption['paypal_cert_file']} not found\n");
+			return false;
+		}
+
+		$options['cert_id'] = $encryption['cert_id'];
+
+		// Assign Build Notation for PayPal Support
+		$options['bn'] = $encryption['bn'];
+
+		$data = '';
+		foreach ($options as $key => $value) {
+			if ($value != '') {
+				$data .= "{$key}={$value}\n";
+			}
+		}
+
+		$openssl_cmd   = array();
+		$openssl_cmd[] = "({$encryption['openssl']} smime";
+		$openssl_cmd[] = "-sign -signer {$encryption['cert_file']}";
+		$openssl_cmd[] = "-inkey {$encryption['key_file']}";
+		$openssl_cmd[] = "-outform der -nodetach -binary <<_EOF_\n{$data}\n_EOF_\n) |";
+		$openssl_cmd[] = "{$encryption['openssl']} smime -encrypt";
+		$openssl_cmd[] = "-des3 -binary -outform pem {$encryption['paypal_cert_file']}";
+		$openssl_cmd   = implode(' ', $openssl_cmd);
+
+		exec($openssl_cmd, $output, $error);
+		if ($error) {
+			return false;
+		}
+
+		$encryptedFields = implode("\n", $output);
+		return implode(' ', array(
+			'<input type="hidden" name="cmd" value="_s-xclick">',
+			"<input type='hidden' name='encrypted' value='{$encryptedFields}' />"
+		));
+	}
+
+/**
+ * Constructs the name value pair in a hidden input html tag
+ *
+ * @param string name is the name of the hidden html element.
+ * @param string value is the value of the hidden html element.
+ * @return string hidden html field
  */
 	function __hiddenNameValue($name, $value){
 		return "<input type='hidden' name='{$name}' value='{$value}' />";
@@ -188,9 +273,9 @@ class PaypalHelper extends AppHelper {
 
 /**
  * Constructs the submit button from the provided text
- * @param String text | text is the label of the submit button.	Can use plain text or image url.
- * @access private
- * @return Html form button and close form
+ *
+ * @param string text | text is the label of the submit button.	Can use plain text or image url.
+ * @return string html form button and close form
  */
 	function __submitButton($options = array()) {
 		$options = is_array($options) ? $options : array('label' => $options);
@@ -200,11 +285,10 @@ class PaypalHelper extends AppHelper {
 /**
  * Converts human readable subscription terms into paypal terms if need be
  *
- * @access private
  * @param array options | human readable options into paypal API options
- *              INT period //paypal api period of term, 2, 3, 1
- *              String term //paypal API term //month, year, day, week
- *              Float amount //paypal API amount to charge for perioud of term.
+ *              int    period - paypal api period of term, 2, 3, 1
+ *              string term   - paypal API term //month, year, day, week
+ *              float  amount - paypal API amount to charge for perioud of term.
  * @return array options
  */
 	function __subscriptionOptions($options = array()) {
@@ -234,8 +318,8 @@ class PaypalHelper extends AppHelper {
 	}
 
 /**
- * __uploadCartOptions converts an array of items into paypal friendly name/value pairs
- * @access private
+ * Converts an array of items into paypal friendly name/value pairs
+ *
  * @param array of options that will be returned with proper paypal friendly name/value pairs for items
  * @return array options
  */

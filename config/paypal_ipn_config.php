@@ -20,7 +20,8 @@ class PaypalIpnConfig {
 		'currency_code' => 'USD',                           // Currency
 		'lc'            => 'US',                            // Locality
 		'item_name'     => 'Paypal_IPN',                    // Default item name.
-		'amount'        => '15.00'                          // Default item amount.
+		'amount'        => '15.00',                         // Default item amount.
+		'encrypt'       => false,                           // Set to true to enable encryption
 	);
 
 /***********
@@ -36,7 +37,26 @@ class PaypalIpnConfig {
 		'currency_code' => 'USD',                           // Currency
 		'lc'            => 'US',                            // Locality
 		'item_name'     => 'Paypal_IPN',                    // Default item name.
-		'amount'        => '15.00'                          // Default item amount.
+		'amount'        => '15.00',                         // Default item amount.
+		'encrypt'       => false,                           // Set to true to enable encryption
+	);
+
+	var $encryption_default = array(
+		'cert_id'       => '',                              // Certificate ID (gotten after certificate uploaded to paypal)
+		'key_file'      => '',                              // Absolute path to Private Key File
+		'cert_file'     => '',                              // Absolute path to Public Certificate file
+		'paypal_cert_file' => '',                           // Absolute path to Paypal certificate file
+		'openssl'       => '/usr/bin/openssl',              // OpenSSL location
+		'bn'            => 'cakephp_paypal-ipn-plugin',     // Build Notation
+	);
+
+	var $encryption_test = array(
+		'cert_id'       => '',                              // Certificate ID (gotten after certificate uploaded to paypal)
+		'key_file'      => '',                              // Absolute path to Private Key File
+		'cert_file'     => '',                              // Absolute path to Public Certificate file
+		'paypal_cert_file' => '',                           // Absolute path to Paypal certificate file
+		'openssl'       => '/usr/bin/openssl',              // OpenSSL location
+		'bn'            => 'cakephp_paypal-ipn-plugin',     // Build Notation
 	);
 
 }

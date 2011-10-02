@@ -163,4 +163,29 @@ class InstantPaymentNotification extends PaypalIpnAppModel {
 		return $retval;
 	}
 
+/**
+ * searches existing IPNs transactions using tnx_id or parent_tnx_id
+ *
+ * @param array $data
+ * @return mixed false if not matched, existingIpnId otherwise
+ * @todo Figure out what to do if more than one record is found
+ */
+	function searchIPNId($data = array()) {
+		if (empty($data['InstantPaymentNotification']['tnx_id'])) {
+			return false;
+		}
+
+		$ipns = $this->findAllByTnxId($data['InstantPaymentNotification']['tnx_id']);
+		if (!empty($ipns) && (count($ipns) == 1)) {
+			return $ipns[0]['InstantPaymentNotification']['id'];
+		}
+
+		$ipns = $this->findAllByParentTnxId($data['InstantPaymentNotification']['tnx_id']);
+		if (!empty($ipns) && (count($ipns) == 1)) {
+			return $ipns[0]['InstantPaymentNotification']['id'];
+		}
+
+		return false;
+	}
+
 }

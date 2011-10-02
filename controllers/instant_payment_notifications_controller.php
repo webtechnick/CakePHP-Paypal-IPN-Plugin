@@ -21,8 +21,9 @@ class InstantPaymentNotificationsController extends PaypalIpnAppController {
 
 /**
  * Paypal IPN processing action..
- * This action is the intake for a paypal_ipn callback performed by paypal itself.
- * This action will take the paypal callback, verify it (so trickery) and save the transaction into your database for later review
+ * Intake for a paypal_ipn callback performed by paypal itself.
+ * This action will take the paypal callback, verify it (so trickery) and
+ * save the transaction into your database for later review
  *
  * @access public
  * @author Nick Baker
@@ -30,6 +31,12 @@ class InstantPaymentNotificationsController extends PaypalIpnAppController {
 	function process() {
 		if ($this->InstantPaymentNotification->isValid($_POST)) {
 			$notification = $this->InstantPaymentNotification->buildAssociationsFromIPN($_POST);
+
+			$existingIPNId = $this->InstantPaymentNotification->searchIPNId($notification);
+			if ($existingIPNId !== false) {
+				$notification['InstantPaymentNotification']['id'] = $existingIPNId;
+			}
+
 			$this->InstantPaymentNotification->saveAll($notification);
 			$this->__processTransaction($this->InstantPaymentNotification->id);
 		}

@@ -2,4 +2,3 @@
 class PaypalIpnAppController extends AppController {
   
 }
-?>

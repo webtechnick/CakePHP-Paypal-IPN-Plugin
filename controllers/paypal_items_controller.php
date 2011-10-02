@@ -18,7 +18,7 @@ class PaypalItemsController extends PaypalIpnAppController {
 	}
 
 	function admin_add(){
-	   $this->redirect(array('admin' => true, 'action' => 'edit')); 
+	   $this->redirect(array('admin' => true, 'action' => 'edit'));
 	}
 
 	function admin_edit($id = null) {
@@ -49,4 +49,3 @@ class PaypalItemsController extends PaypalIpnAppController {
 	}
 
 }
-?>

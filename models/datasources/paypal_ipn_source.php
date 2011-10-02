@@ -1,5 +1,7 @@
 <?php
-App::import('Core', array('HttpSocket'));
+if (!class_exists('HttpSocket')) {
+	App::import('Core', array('HttpSocket'));
+}
 
 class PaypalIpnSource extends DataSource {
 
@@ -14,7 +16,11 @@ class PaypalIpnSource extends DataSource {
  * constructer.  Load the HttpSocket into the Http var.
  */
 	function __construct() {
-		$this->Http =& new HttpSocket();
+		if (!PHP5) {
+			$this->Http =& new HttpSocket();
+		} else {
+			$this->Http = new HttpSocket();
+		}
 	}
 
 /**

@@ -26,9 +26,19 @@ class InstantPaymentNotification extends PaypalIpnAppModel {
  */
 	function isValid($data) {
 		if (!empty($data)) {
-		  App::import(array('type' => 'File', 'name' => 'PaypalIpn.PaypalIpnSource', 'file' => 'models'.DS.'datasources'.DS.'paypal_ipn_source.php'));
-		  $this->paypal = new PaypalIpnSource();
-		  return $this->paypal->isValid($data);
+			if (!class_exists('PaypalIpnSource')) {
+				App::import(array(
+					'type' => 'File',
+					'name' => 'PaypalIpn.PaypalIpnSource',
+					'file' => 'models' . DS . 'datasources' . DS . 'paypal_ipn_source.php'
+				));
+			}
+			if (!class_exists('PaypalIpnSource')) {
+				trigger_error(__d('paypal_ipn', 'PaypalIpnSource: The datasource could not be found.', true), E_USER_ERROR);
+			}
+
+			$this->paypal = new PaypalIpnSource();
+			return $this->paypal->isValid($data);
 		}
 
 		return false;
@@ -105,7 +115,9 @@ class InstantPaymentNotification extends PaypalIpnAppModel {
 			$this->log("Emailing: {$options['to']} through the PayPal IPN Plugin. ",'email');
 		}
 
-		App::import('Component','Email');
+		if (!class_exists('EmailComponent')) {
+			App::import('Component','Email');
+		}
 		$Email = new EmailComponent;
 
 		$Email->to = $options['to'];

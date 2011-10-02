@@ -1,5 +1,6 @@
 <?php
-/** Paypal Helper part of the PayPal IPN plugin.
+/**
+ * Paypal Helper part of the PayPal IPN plugin.
  *
  * @author Nick Baker
  * @link http://www.webtechnick.com
@@ -7,75 +8,116 @@
  */
 class PaypalHelper extends AppHelper {
 
-	var $helpers = array('Html','Form');
+	var $helpers = array('Html', 'Form');
+
+	var $config = array();
 
 /**
- * Setup the config based on the paypal_ipn_config in /plugins/paypal_ipn/config/paypal_ipn_config.php
+ * Setup the config based on either the Configure::read() values
+ * or the PaypalIpnConfig in config/paypal_ipn_config.php
+ *
+ * Will attempt to read configuration in the following order:
+ *   Configure::read('PaypalIpn')
+ *   App::import() of config/paypal_ipn_config.php
+ *   App::import() of plugin's config/paypal_ipn_config.php
  */
-	function __construct(){
-		if (App::import(array('type' => 'File', 'name' => 'PaypalIpn.PaypalIpnConfig', 'file' => CONFIGS .'paypal_ipn_config.php'))) {
-			$this->config =& new PaypalIpnConfig();
-		} else {
-			//Import from paypal plugin configuration
-			App::import(array('type' => 'File', 'name' => 'PaypalIpn.PaypalIpnConfig', 'file' => 'config'.DS.'paypal_ipn_config.php'));
-			$this->config =& new PaypalIpnConfig();
-		}
+	function __construct() {
+		$this->config = Configure::read('PaypalIpn');
 
+		if (empty($this->config)) {
+			$importConfig = array(
+				'type' => 'File',
+				'name' => 'PaypalIpn.PaypalIpnConfig',
+				'file' => CONFIGS .'paypal_ipn_config.php'
+			);
+			if (!class_exists('PaypalIpnConfig')) {
+				App::import($importConfig);
+			}
+			if (!class_exists('PaypalIpnConfig')) {
+				// Import from paypal plugin configuration
+				$importConfig['file'] = 'config' . DS . 'paypal_ipn_config.php';
+				App::import($importConfig);
+			}
+			if (!class_exists('PaypalIpnConfig')) {
+				trigger_error(__d('paypal_ipn', 'PaypalIpnConfig: The configuration could not be loaded.', true), E_USER_ERROR);
+			}
+
+			if (!PHP5) {
+				$config =& new PaypalIpnConfig();
+			} else {
+				$config = new PaypalIpnConfig();
+			}
+
+			$vars = get_object_vars($config);
+			foreach ($vars as $property => $configuration) {
+				$this->config[$property] = $configuration;
+			}
+		}
 		parent::__construct();
 	}
 
 /**
- * function button will create a complete form button to Pay Now, Donate,
+ * Creates a complete form button to Pay Now, Donate, 
  * Add to Cart, or Subscribe using the paypal service.
  * Configuration for the button is in /config/paypal_ip_config.php
  *
- * for this to work the option 'item_name' and 'amount' must be set in
- * the array options or default config options.
+ * for this to work the option 'item_name' and 'amount' must be set in the array options or default config options.
  *
  * Example:
- *     $paypal->button('Pay Now', array('amount' => '12.00', 'item_name' => 'test item'));
- *     $paypal->button('Subscribe', array('type' => 'subscribe', 'amount' => '60.00', 'term' => 'month', 'period' => '2'));
- *     $paypal->button('Donate', array('type' => 'donate', 'amount' => '60.00'));
- *     $paypal->button('Add To Cart', array('type' => 'addtocart', 'amount' => '15.00'));
- *     $paypal->button('View Cart', array('type' => 'viewcart'));
- *     $paypal->button('Unsubscribe', array('type' => 'unsubscribe'));
- *     $paypal->button('Checkout', array(
- *         'type' => 'cart',
- *         'items' => array(
- *             array('item_name' => 'Item 1', 'amount' => '120', 'quantity' => 2, 'item_number' => '1234'),
- *             array('item_name' => 'Item 2', 'amount' => '50'),
- *             array('item_name' => 'Item 3', 'amount' => '80', 'quantity' => 3),
- *         )
- *     ));
+ *  $paypal->button('Pay Now', array('amount' => '12.00', 'item_name' => 'test item'));
+ *  $paypal->button('Subscribe', array('type' => 'subscribe', 'amount' => '60.00', 'term' => 'month', 'period' => '2'));
+ *  $paypal->button('Donate', array('type' => 'donate', 'amount' => '60.00'));
+ *  $paypal->button('Add To Cart', array('type' => 'addtocart', 'amount' => '15.00'));
+ *  $paypal->button('View Cart', array('type' => 'viewcart'));
+ *  $paypal->button('Unsubscribe', array('type' => 'unsubscribe'));
+ *  $paypal->button('Checkout', array(
+ *      'type' => 'cart',
+ *      'items' => array(
+ *           array('item_name' => 'Item 1', 'amount' => '120', 'quantity' => 2, 'item_number' => '1234'),
+ *           array('item_name' => 'Item 2', 'amount' => '50'),
+ *           array('item_name' => 'Item 3', 'amount' => '80', 'quantity' => 3),
+ *       )
+ *  ));
+ *
  * Test Example:
- *     $paypal->button('Pay Now', array('test' => true, 'amount' => '12.00', 'item_name' => 'test item'));
+ *  $paypal->button('Pay Now', array('test' => true, 'amount' => '12.00', 'item_name' => 'test item'));
  *
  * @access public
  * @param String $title takes the title of the paypal button (default "Pay Now" or "Subscribe" depending on option['type'])
  * @param Array $options takes an options array defaults to (configuration in /config/paypal_ipn_config.php)
+ *        test: true|false switches default settings in /config/paypal_ipn_config.php between settings and testSettings
+ *        type: 'paynow', 'addtocart', 'donate', 'unsubscribe', 'cart', or 'subscribe' (default 'paynow')
  *
- *     helper_options:
- *         test: true|false switches default settings in /config/paypal_ipn_config.php between settings and testSettings
- *         type: 'paynow', 'addtocart', 'donate', 'unsubscribe', 'cart', or 'subscribe' (default 'paynow')
- *
- *  You may pass in api name value pairs to be passed directly to the paypal
- *  form link. Refer to paypal.com for a complete list. some paypal API examples:
- *         amount: float value
- *         notify_url: string url
- *         item_name: string name of product.
- *         etc...
+ * You may pass in api name value pairs to be passed directly to the paypal
+ * form link. Refer to paypal.com for a complete list. Some Paypal API examples:
+ *   amount: float value
+ *   notify_url: string url
+ *   item_name: string name of product.
  */
-	function button($title = null, $options = array()) {
+	function button($title, $options = array(), $buttonOptions = array()) {
 		if (is_array($title)) {
+			$buttonOptions = $options;
 			$options = $title;
-			$title = isset($options['label']) ? $options['label'] : null;
+		} else if (empty($buttonOptions['label'])) {
+			$buttonOptions['label'] = $title;
 		}
-		$defaults = (isset($options['test']) && $options['test']) ? $this->config->testSettings : $this->config->settings;
+		if (!empty($options['test'])) {
+			if ($options['test'] === true) {
+				$defaults = $this->config['test'];
+			} elseif (is_array($options['test'])) {
+				$defaults = $options['test'];
+			} else {
+				$defaults = $this->config[$options['test']];
+			}
+		} else {
+			$defaults = $this->config['default'];
+		}
+
 		$options = array_merge($defaults, $options);
 		$options['type'] = (isset($options['type'])) ? $options['type'] : "paynow";
 
 		switch ($options['type']) {
-			case 'subscribe': // Subscribe
+			case 'subscribe':   // Subscribe
 				$options['cmd'] = '_xclick-subscriptions';
 				$default_title = 'Subscribe';
 				$options['no_note'] = 1;
@@ -84,83 +126,90 @@ class PaypalHelper extends AppHelper {
 				$options['sra'] = 1;
 				$options = $this->__subscriptionOptions($options);
 				break;
-			case 'addtocart': // Add To Cart
+			case 'addtocart':   // Add To Cart
 				$options['cmd'] = '_cart';
 				$options['add'] = '1';
 				$default_title = 'Add To Cart';
 				break;
-			case 'viewcart': // View Cart
+			case 'viewcart':    // View Cart
 				$options['cmd'] = '_cart';
 				$options['display'] = '1';
 				$default_title = 'View Cart';
 				break;
-			case 'donate': // Doante
+			case 'donate':      // Doante
 				$options['cmd'] = '_donations';
 				$default_title = 'Donate';
 				break;
-			case 'unsubscribe': // Unsubscribe
+			case 'unsubscribe': //Unsubscribe
 				$options['cmd'] = '_subscr-find';
 				$options['alias'] = $options['business'];
 				$default_title = 'Unsubscribe';
 				break;
-			case 'cart': // upload cart
+			case 'cart':        // upload cart
 				$options['cmd'] = '_cart';
 				$options['upload'] = 1;
 				$default_title = 'Checkout';
 				$options = $this->__uploadCartOptions($options);
 				break;
-			default: // Pay Now
+			default:            // Pay Now
 				$options['cmd'] = '_xclick';
 				$default_title = 'Pay Now';
 				break;
 		}
 
-		$title = (empty($title)) ? $default_title : $title;
+		if (empty($buttonOptions['label'])) {
+			if (empty($options['label'])) {
+				$buttonOptions['label'] = $default_title;
+			} else {
+				$buttonOptions['label'] = $options['label'];
+			}
+		}
 		$retval = "<form action='{$options['server']}/cgi-bin/webscr' method='post'><div class='paypal-form'>";
 		unset($options['server']);
 		foreach ($options as $name => $value) {
 			 $retval .= $this->__hiddenNameValue($name, $value);
 		}
-		$retval .= $this->__submitButton($title);
+		$retval .= $this->__submitButton($buttonOptions);
 
 		return $retval;
 	}
 
 /**
- * __hiddenNameValue constructs the name value pair in a hidden input html tag
+ * Constructs the name value pair in a hidden input html tag
  * @access private
  * @param String name is the name of the hidden html element.
  * @param String value is the value of the hidden html element.
  * @access private
  * @return Html form button and close form
  */
-	function __hiddenNameValue($name, $value) {
-		return "<input type='hidden' name='$name' value='$value' />";
+	function __hiddenNameValue($name, $value){
+		return "<input type='hidden' name='{$name}' value='{$value}' />";
 	}
 
 /**
- * __submitButton constructs the submit button from the provided text
+ * Constructs the submit button from the provided text
  * @param String text | text is the label of the submit button.	Can use plain text or image url.
  * @access private
  * @return Html form button and close form
  */
-	function __submitButton($text) {
-		return "</div>" . $this->Form->end(array('label' => $text));
+	function __submitButton($options = array()) {
+		$options = is_array($options) ? $options : array('label' => $options);
+		return "</div>" . $this->Form->end($options);
 	}
 
 /**
- * __subscriptionOptions conversts human readable subscription terms
- * into paypal terms if need be
+ * Converts human readable subscription terms into paypal terms if need be
+ *
  * @access private
  * @param array options | human readable options into paypal API options
- *        INT period //paypal api period of term, 2, 3, 1
- *        String term //paypal API term //month, year, day, week
- *        Float amount //paypal API amount to charge for perioud of term.
+ *              INT period //paypal api period of term, 2, 3, 1
+ *              String term //paypal API term //month, year, day, week
+ *              Float amount //paypal API amount to charge for perioud of term.
  * @return array options
  */
 	function __subscriptionOptions($options = array()) {
 		// Period... every 1, 2, 3, etc.. Term
-		if(isset($options['period'])) {
+		if (isset($options['period'])) {
 			$options['p3'] = $options['period'];
 			unset($options['period']);
 		}
@@ -171,12 +220,12 @@ class PaypalHelper extends AppHelper {
 		}
 		// Terms, Month(s), Day(s), Week(s), Year(s)
 		if (isset($options['term'])) {
-			switch($options['term']) {
+			switch ($options['term']) {
 				case 'month': $options['t3'] = 'M'; break;
-				case 'year': $options['t3'] = 'Y'; break;
-				case 'day': $options['t3'] = 'D'; break;
-				case 'week': $options['t3'] = 'W'; break;
-				default: $options['t3'] = $options['term'];
+				case 'year':  $options['t3'] = 'Y'; break;
+				case 'day':   $options['t3'] = 'D'; break;
+				case 'week':  $options['t3'] = 'W'; break;
+				default:      $options['t3'] = $options['term'];
 			}
 			unset($options['term']);
 		}

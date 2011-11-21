@@ -3,15 +3,15 @@
   * Migration file.  If you do not have paypal_ipn installed on your system. please use the ipn schema file.
   */
 class itemsSchema extends CakeSchema {
-  var $name = 'items';
-  
-  function before($event = array()) {
+	var $name = 'items';
+
+	function before($event = array()) {
 		return true;
 	}
 
 	function after($event = array()) {
-	}  
-	
+	}
+
 	var $paypal_items = array(
 		'id' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 36, 'key' => 'primary'),
 		'instant_payment_notification_id' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 36),
@@ -28,4 +28,3 @@ class itemsSchema extends CakeSchema {
 	);
 
 }
-?>

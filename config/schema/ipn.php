@@ -1,15 +1,15 @@
 <?php
 class ipnSchema extends CakeSchema {
-  var $name = 'ipn';
-  
-  function before($event = array()) {
+	var $name = 'ipn';
+
+	function before($event = array()) {
 		return true;
 	}
 
 	function after($event = array()) {
-	}  
-  
-  var $instant_payment_notifications = array(
+	}
+
+	var $instant_payment_notifications = array(
 		'id' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 36, 'key' => 'primary'),
 		'notify_version' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 64),
 		'verify_sign' => array('type' => 'string', 'null' => true, 'default' => NULL, 'length' => 127),
@@ -100,7 +100,7 @@ class ipnSchema extends CakeSchema {
 		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1))
 	);
-	
+
 	var $paypal_items = array(
 		'id' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 36, 'key' => 'primary'),
 		'instant_payment_notification_id' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 36),
@@ -117,4 +117,3 @@ class ipnSchema extends CakeSchema {
 	);
 
 }
-?>

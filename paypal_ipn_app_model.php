@@ -2,4 +2,3 @@
 class PaypalIpnAppModel extends AppModel {
   
 }
-?>

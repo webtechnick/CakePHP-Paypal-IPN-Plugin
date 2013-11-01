@@ -40,7 +40,7 @@ class InstantPaymentNotificationsController extends PaypalIpnAppController {
 			$this->InstantPaymentNotification->saveAll($notification);
 			$this->__processTransaction($this->InstantPaymentNotification->id);
 		}
-		$this->redirect('/');
+		return $this->redirect('/');
 	}
 
 /**

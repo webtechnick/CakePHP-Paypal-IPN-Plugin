@@ -1,4 +1,5 @@
 <?php
+App::uses('PaypalIpnAppModel','PaypalIpn.Model');
 class PaypalItem extends PaypalIpnAppModel {
 
 	var $name = 'PaypalItem';

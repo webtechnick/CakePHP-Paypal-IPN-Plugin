@@ -1,8 +1,6 @@
 <?php
-if (!class_exists('HttpSocket')) {
-	App::import('Core', array('HttpSocket'));
-}
-
+App::uses('HttpSocket','Network/Http');
+App::uses('DataSource','Model/Datasource');
 class PaypalIpnSource extends DataSource {
 
 /**
@@ -15,12 +13,8 @@ class PaypalIpnSource extends DataSource {
 /**
  * constructer.  Load the HttpSocket into the Http var.
  */
-	function __construct() {
-		if (!PHP5) {
-			$this->Http =& new HttpSocket();
-		} else {
-			$this->Http = new HttpSocket();
-		}
+	function __construct($config = array()) {
+		$this->Http = new HttpSocket();
 	}
 
 /**
@@ -50,7 +44,7 @@ class PaypalIpnSource extends DataSource {
 
 		$response = $this->Http->post($server, $data);
 
-		if ($response == "VERIFIED") {
+		if ($response->body == "VERIFIED") {
 			return true;
 		}
 

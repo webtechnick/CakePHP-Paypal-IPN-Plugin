@@ -1,4 +1,5 @@
 <?php
+App::uses('PaypalIpnAppModel','PaypalIpn.Model');
 class InstantPaymentNotification extends PaypalIpnAppModel {
 /**
  * name is the name of the model

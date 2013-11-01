@@ -6,6 +6,7 @@
  * @link http://www.webtechnick.com
  * @license MIT
  */
+App::uses('AppHelper','View/Helper');
 class PaypalHelper extends AppHelper {
 
 	var $helpers = array('Html', 'Form');
@@ -23,7 +24,7 @@ class PaypalHelper extends AppHelper {
  *   App::import() of config/paypal_ipn_config.php
  *   App::import() of plugin's config/paypal_ipn_config.php
  */
-	function __construct() {
+	function __construct(View $View, $settings = array()) {
 		$this->config = Configure::read('PaypalIpn');
 
 		if (empty($this->config)) {
@@ -44,11 +45,7 @@ class PaypalHelper extends AppHelper {
 				trigger_error(__d('paypal_ipn', 'PaypalIpnConfig: The configuration could not be loaded.'), E_USER_ERROR);
 			}
 
-			if (!PHP5) {
-				$config =& new PaypalIpnConfig();
-			} else {
-				$config = new PaypalIpnConfig();
-			}
+			$config = new PaypalIpnConfig();
 
 			$vars = get_object_vars($config);
 			foreach ($vars as $property => $configuration) {
@@ -60,7 +57,7 @@ class PaypalHelper extends AppHelper {
 				}
 			}
 		}
-		parent::__construct();
+		parent::__construct($View, $settings);
 	}
 
 /**

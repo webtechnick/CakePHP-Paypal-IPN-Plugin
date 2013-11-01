@@ -31,7 +31,7 @@ http://github.com/webtechnick
 
 # Install:
 1. Copy plugin into your `app/Plugin/PaypalIpn` directory
-2. Load the plugin in `bootstrat.php`
+2. Load the plugin in `bootstrap.php`
 
 		CakePlugin::('PaypalIpn');
 

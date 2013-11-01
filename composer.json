@@ -1,0 +1,30 @@
+{
+	"name": "webtechnick/cakephp-paypal-ipn-plugin",
+	"description": "CakePHP Paypal Instant Payment Notification Plugin",
+	"type": "cakephp-plugin",
+	"keywords": ["cakephp", "paypal", "ipn", "shopping cart", "cart", "credit card", "processing"],
+	"homepage": "https://github.com/webtechnick/CakePHP-PaypalIpn-Plugin",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Nick Baker",
+			"homepage": "http://www.webtechnick.com",
+			"role": "Author"
+		}
+	],
+	"support": {
+		"issues": "https://github.com/webtechnick/CakePHP-PaypalIpn-Plugin/issues",
+		"source": "https://github.com/webtechnick/CakePHP-PaypalIpn-Plugin"
+	},
+	"require": {
+		"php": ">=5.3.0",
+		"composer/installers": "*"
+	},
+	"extra": {
+		"branch-alias": {
+			"dev-master": "2.x-dev",
+			"cakephp1.3": "1.3-dev"
+		},
+		"installer-name": "PaypalIpn"
+	}
+}

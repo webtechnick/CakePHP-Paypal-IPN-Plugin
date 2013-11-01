@@ -31,14 +31,14 @@ class PaypalHelper extends AppHelper {
 			$importConfig = array(
 				'type' => 'File',
 				'name' => 'PaypalIpn.PaypalIpnConfig',
-				'file' => APP . 'Config' . DS .'paypal_ipn_config.php'
+				'file' => APP . 'Config' . DS . 'paypal_ipn_config.php'
 			);
 			if (!class_exists('PaypalIpnConfig')) {
 				App::import($importConfig);
 			}
 			if (!class_exists('PaypalIpnConfig')) {
 				// Import from paypal plugin configuration
-				$importConfig['file'] = 'config' . DS . 'paypal_ipn_config.php';
+				$importConfig['file'] = 'Config' . DS . 'paypal_ipn_config.php';
 				App::import($importConfig);
 			}
 			if (!class_exists('PaypalIpnConfig')) {

@@ -1,14 +1,15 @@
 # Paypal IPN plugin  (Paypal Instant Payment Notification)
-* Version 3.6.0
+* Version 4.0.0
 * Author: Nick Baker (nick@webtechnick.com)
 * Website: http://www.webtechnick.com
 
 # Get it
-* Download: http://projects.webtechnick.com/paypal_ipn.tar.gz
 * GIT: git@github.com:webtechnick/CakePHP-Paypal-IPN-Plugin.git
 
 # Required:
-CakePHP 1.2.x/1.3.x
+CakePHP 2.x
+
+Note: CakePHP 1.3 use the cakephp1.3 branch
 
 # More From WebTechNick
 http://github.com/webtechnick
@@ -26,20 +27,19 @@ http://github.com/webtechnick
 * 3.5.1: Renamed columns option_name_1 and option_name_2 to option_name1 and option_name2 respectively
 * 3.5.2: Updating to latest conventions in CakePHP 1.3, no longer requires Auth, all cart items will be reviewable in paypal_items table
 * 3.6.0: Adding View Cart button option
-
-
-# Migration Guide from 3.0 to 3.5:
-open a terminal and execute the following command:
-  
-	$ cake schema create -path plugins/paypal_ipn/config/sql -name items
+* 4.0.0: CakePHP 2.x ready.
 
 # Install:
-1. Copy plugin into your `/app/plugins/paypal_ipn` directory
-2. Run
+1. Copy plugin into your `app/Plugin/PaypalIpn` directory
+2. Load the plugin in `bootstrat.php`
 
-		$ cake schema create -path plugins/paypal_ipn/config/sql -name ipn
+		CakePlugin::('PaypalIpn');
+
+2. Run the schema to create the required tables.
+
+		$ cake schema create --plugin PaypalIpn
 		
-3. Add the following into your /app/config/routes.php file (optional):
+3. Add the following into your /app/Config/Routes.php file (optional):
 
 		/* Paypal IPN plugin */
 		Router::connect('/paypal_ipn/process', array('plugin' => 'paypal_ipn', 'controller' => 'instant_payment_notifications', 'action' => 'process'));
@@ -60,18 +60,18 @@ open a terminal and execute the following command:
 1. Update `/paypal_ipn/config/paypal_ipn_config.php` with your paypal information
 2. Add `PaypalIpn.Paypal` to your helpers list in `app_controller.php`
 
-	var $helpers = array('Html','Form','PaypalIpn.Paypal');
+	public $helpers = array('Html','Form','PaypalIpn.Paypal');
 	
-## Usage: (view the actual /paypal_ipn/views/helpers/paypal.php for more information)
-       $paypal->button(String tittle, Options array); 
+## Usage: (view the actual Plugin/PaypalIpn/View/Helper/PaypalHelper.php for more information)
+       $this->Paypal->button(String tittle, Options array); 
          
-       $paypal->button('Pay Now', array('amount' => '12.00', 'item_name' => 'test item'));
-       $paypal->button('Subscribe', array('type' => 'subscribe', 'amount' => '60.00', 'term' => 'month', 'period' => '2'));
-       $paypal->button('Donate', array('type' => 'donate', 'amount' => '60.00'));
-       $paypal->button('Add To Cart', array('type' => 'addtocart', 'amount' => '15.00'));
-       $paypal->button('View Cart', array('type' => 'viewcart', 'amount' => '15.00'));
-       $paypal->button('Unsubscribe', array('type' => 'unsubscribe'));
-       $paypal->button('Checkout', array(
+       $this->Paypal->button('Pay Now', array('amount' => '12.00', 'item_name' => 'test item'));
+       $this->Paypal->button('Subscribe', array('type' => 'subscribe', 'amount' => '60.00', 'term' => 'month', 'period' => '2'));
+       $this->Paypal->button('Donate', array('type' => 'donate', 'amount' => '60.00'));
+       $this->Paypal->button('Add To Cart', array('type' => 'addtocart', 'amount' => '15.00'));
+       $this->Paypal->button('View Cart', array('type' => 'viewcart', 'amount' => '15.00'));
+       $this->Paypal->button('Unsubscribe', array('type' => 'unsubscribe'));
+       $this->Paypal->button('Checkout', array(
 					'type' => 'cart',
 					'items' => array(
 						array('item_name' => 'Item 1', 'amount' => '120', 'quantity' => 2, 'item_number' => '1234'),
@@ -81,7 +81,7 @@ open a terminal and execute the following command:
 				));
 				
        //Test Example
-       $paypal->button('Pay Now', array('test' => true, 'amount' => '12.00', 'item_name' => 'test item'));
+       $this->Paypal->button('Pay Now', array('test' => true, 'amount' => '12.00', 'item_name' => 'test item'));
        
 ## Alternatively to Paypal Helper 
 Instead of the Paypal Helper you can use your custom buttons but make sure to set notify_url to your configured route.
@@ -95,7 +95,7 @@ Instead of the Paypal Helper you can use your custom buttons but make sure to se
 It is generally recommened to use the paypal helper as it will generate everything for you based on your configurations
 
 # Paypal Notification Callback:
-Create a function in your `/app/app_controller.php` like so:
+Create a function in your `app/Controller/AppController.php` like so:
 
 	function afterPaypalNotification($txnId){
 		//Here is where you can implement code to apply the transaction to your app.
@@ -108,10 +108,9 @@ Create a function in your `/app/app_controller.php` like so:
 		//Tip: be sure to check the payment_status is complete because failure 
 		//     are also saved to your database for review.
 		
-		if($transaction['InstantPaymentNotification']['payment_status'] == 'Completed'){
+		if ($transaction['InstantPaymentNotification']['payment_status'] == 'Completed') {
 			//Yay!  We have monies!
-		}
-		else {
+		}	else {
 			//Oh no, better look at this transaction to determine what to do; like email a decline letter.
 		}
 	} 
@@ -134,7 +133,7 @@ in the `app_controller.php`
 		'sendAs' => 'text'
 	));
 
-Hint: use this in your afterPaypalNotification callback in your `app_controller.php`
+Hint: use this in your afterPaypalNotification callback in your `AppController.php`
    
 	function afterPaypalNotification($txnId){
 		ClassRegistry::init('PaypalIpn.InstantPaymentNotification')->email(array(

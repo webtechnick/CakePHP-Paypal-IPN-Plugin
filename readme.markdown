@@ -57,31 +57,32 @@ http://github.com/webtechnick
 
 
 ## Paypal Button Helper: (optional) if you plan on using the paypal helper for your PayNow or Subscribe Buttons
-1. Update `/paypal_ipn/config/paypal_ipn_config.php` with your paypal information
-2. Add `PaypalIpn.Paypal` to your helpers list in `app_controller.php`
+1. Update `Config/paypal_ipn_config.php` with your paypal information
+2. Add `PaypalIpn.Paypal` to your helpers list in `AppController.php`
 
-	public $helpers = array('Html','Form','PaypalIpn.Paypal');
+		public $helpers = array('Html','Form','PaypalIpn.Paypal');
 	
 ### Usage: (view the actual Plugin/PaypalIpn/View/Helper/PaypalHelper.php for more information)
-       $this->Paypal->button(String tittle, Options array); 
-         
-       $this->Paypal->button('Pay Now', array('amount' => '12.00', 'item_name' => 'test item'));
-       $this->Paypal->button('Subscribe', array('type' => 'subscribe', 'amount' => '60.00', 'term' => 'month', 'period' => '2'));
-       $this->Paypal->button('Donate', array('type' => 'donate', 'amount' => '60.00'));
-       $this->Paypal->button('Add To Cart', array('type' => 'addtocart', 'amount' => '15.00'));
-       $this->Paypal->button('View Cart', array('type' => 'viewcart', 'amount' => '15.00'));
-       $this->Paypal->button('Unsubscribe', array('type' => 'unsubscribe'));
-       $this->Paypal->button('Checkout', array(
-					'type' => 'cart',
-					'items' => array(
-						array('item_name' => 'Item 1', 'amount' => '120', 'quantity' => 2, 'item_number' => '1234'),
-						array('item_name' => 'Item 2', 'amount' => '50'),
-						array('item_name' => 'Item 3', 'amount' => '80', 'quantity' => 3),
-					)
-				));
-				
-       //Test Example
-       $this->Paypal->button('Pay Now', array('test' => true, 'amount' => '12.00', 'item_name' => 'test item'));
+
+		$this->Paypal->button(String tittle, Options array); 
+	 
+		$this->Paypal->button('Pay Now', array('amount' => '12.00', 'item_name' => 'test item'));
+		$this->Paypal->button('Subscribe', array('type' => 'subscribe', 'amount' => '60.00', 'term' => 'month', 'period' => '2'));
+		$this->Paypal->button('Donate', array('type' => 'donate', 'amount' => '60.00'));
+		$this->Paypal->button('Add To Cart', array('type' => 'addtocart', 'amount' => '15.00'));
+		$this->Paypal->button('View Cart', array('type' => 'viewcart', 'amount' => '15.00'));
+		$this->Paypal->button('Unsubscribe', array('type' => 'unsubscribe'));
+		$this->Paypal->button('Checkout', array(
+			'type' => 'cart',
+			'items' => array(
+				array('item_name' => 'Item 1', 'amount' => '120', 'quantity' => 2, 'item_number' => '1234'),
+				array('item_name' => 'Item 2', 'amount' => '50'),
+				array('item_name' => 'Item 3', 'amount' => '80', 'quantity' => 3),
+			)
+		));
+		
+		//Test Example
+		$this->Paypal->button('Pay Now', array('test' => true, 'amount' => '12.00', 'item_name' => 'test item'));
        
 ## Alternatively to Paypal Helper 
 Instead of the Paypal Helper you can use your custom buttons but make sure to set notify_url to your configured route.

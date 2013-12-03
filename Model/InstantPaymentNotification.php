@@ -1,5 +1,6 @@
 <?php
 App::uses('PaypalIpnAppModel','PaypalIpn.Model');
+App::uses('PaypalIpnSource', 'PaypalIpn.Model/Datasource');
 class InstantPaymentNotification extends PaypalIpnAppModel {
 /**
  * name is the name of the model
@@ -28,18 +29,11 @@ class InstantPaymentNotification extends PaypalIpnAppModel {
 	function isValid($data) {
 		if (!empty($data)) {
 			if (!class_exists('PaypalIpnSource')) {
-				App::import(array(
-					'type' => 'File',
-					'name' => 'PaypalIpn.PaypalIpnSource',
-					'file' => 'models' . DS . 'datasources' . DS . 'paypal_ipn_source.php'
-				));
-			}
-			if (!class_exists('PaypalIpnSource')) {
 				trigger_error(__d('paypal_ipn', 'PaypalIpnSource: The datasource could not be found.'), E_USER_ERROR);
 			}
 
-			$this->paypal = new PaypalIpnSource();
-			return $this->paypal->isValid($data);
+			$this->Paypal = new PaypalIpnSource();
+			return $this->Paypal->isValid($data);
 		}
 
 		return false;
@@ -137,6 +131,27 @@ class InstantPaymentNotification extends PaypalIpnAppModel {
 		  $Email->send();
 		}
 	}
+	
+	/**
+	* If all we have is item_number1 but not just item_number, assign item_number to item_number1
+	* 
+	* @param array data
+	* @param array options
+	* @return mixed result of save
+	*/
+	public function saveAll($data = array(), $options = array()) {
+		$fields = array(
+			'mc_gross',
+			'item_number',
+			'item_name',
+		);
+		foreach ($fields as $field) {
+			if (!isset($data[$this->alias][$field]) && isset($data[$this->alias][$field . '1'])) {
+				$data[$this->alias][$field] = $data[$this->alias][$field . '1'];
+			}
+		}
+		return parent::saveAll($data, $options);
+	}
 
 /**
  * builds the associative array for paypalitems only if it was a cart upload
@@ -146,7 +161,7 @@ class InstantPaymentNotification extends PaypalIpnAppModel {
  */
   function buildAssociationsFromIPN($post) {
 		$retval = array();
-		$retval['InstantPaymentNotification'] = $post;
+		$retval[$this->alias] = $post;
 		if (isset($post['num_cart_items']) && $post['num_cart_items'] > 0) {
 			$retval['PaypalItem'] = array();
 			for ($i=1;$i<=$post['num_cart_items'];$i++) {

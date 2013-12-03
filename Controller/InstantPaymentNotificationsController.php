@@ -1,15 +1,14 @@
 <?php
 class InstantPaymentNotificationsController extends PaypalIpnAppController {
 
-	var $name = 'InstantPaymentNotifications';
-	var $helpers = array('Html', 'Form');
-	var $components = array('Email');
+	public $name = 'InstantPaymentNotifications';
+	public $helpers = array('Html', 'Form');
 
 /**
  * beforeFilter makes sure the process is allowed by auth
  *  since paypal will need direct access to it.
  */
-	function beforeFilter(){
+	public function beforeFilter(){
 		parent::beforeFilter();
 		if (isset($this->Auth)) {
 			$this->Auth->allow('process');
@@ -28,8 +27,13 @@ class InstantPaymentNotificationsController extends PaypalIpnAppController {
  * @access public
  * @author Nick Baker
  */
-	function process() {
+	public function process() {
+		$this->log('Process accessed', 'paypal');
+		if ($this->request->is('post')) {
+			$this->log('POST ' . print_r($_POST, true), 'paypal');
+		}
 		if ($this->InstantPaymentNotification->isValid($_POST)) {
+			$this->log('POST Valid', 'paypal');
 			$notification = $this->InstantPaymentNotification->buildAssociationsFromIPN($_POST);
 
 			$existingIPNId = $this->InstantPaymentNotification->searchIPNId($notification);
@@ -39,6 +43,8 @@ class InstantPaymentNotificationsController extends PaypalIpnAppController {
 
 			$this->InstantPaymentNotification->saveAll($notification);
 			$this->__processTransaction($this->InstantPaymentNotification->id);
+		} else {
+			$this->log('POST Not Validated', 'paypal');
 		}
 		return $this->redirect('/');
 	}
@@ -61,7 +67,7 @@ class InstantPaymentNotificationsController extends PaypalIpnAppController {
 /**
  * Admin Index
  */
-	function admin_index() {
+	public function admin_index() {
 		$this->InstantPaymentNotification->recursive = 0;
 		$this->set('instantPaymentNotifications', $this->paginate());
 	}
@@ -70,7 +76,7 @@ class InstantPaymentNotificationsController extends PaypalIpnAppController {
  * Admin View
  * @param String ID of the transaction to view
  */
-	function admin_view($id = null) {
+	public function admin_view($id = null) {
 		if (!$id) {
 			$this->Session->setFlash(__('Invalid InstantPaymentNotification.'));
 			$this->redirect(array('action'=>'index'));
@@ -81,7 +87,7 @@ class InstantPaymentNotificationsController extends PaypalIpnAppController {
 /**
  * Admin Add
  */
-	function admin_add(){
+	public function admin_add(){
 		 $this->redirect(array('admin' => true, 'action' => 'edit'));
 	}
 
@@ -89,9 +95,9 @@ class InstantPaymentNotificationsController extends PaypalIpnAppController {
  * Admin Edit
  * @param String ID of the transaction to edit
  */
-	function admin_edit($id = null) {
-		if (!empty($this->data)) {
-			if ($this->InstantPaymentNotification->save($this->data)) {
+	public function admin_edit($id = null) {
+		if (!empty($this->request->data)) {
+			if ($this->InstantPaymentNotification->save($this->request->data)) {
 				$this->Session->setFlash(__('The InstantPaymentNotification has been saved'));
 				$this->redirect(array('action'=>'index'));
 			} else {
@@ -99,7 +105,7 @@ class InstantPaymentNotificationsController extends PaypalIpnAppController {
 			}
 		}
 		if ($id && empty($this->data)) {
-			$this->data = $this->InstantPaymentNotification->read(null, $id);
+			$this->request->data = $this->InstantPaymentNotification->read(null, $id);
 		}
 	}
 
@@ -107,7 +113,7 @@ class InstantPaymentNotificationsController extends PaypalIpnAppController {
  * Admin Delete
  * @param String ID of the transaction to delete
  */
-	function admin_delete($id = null) {
+	public function admin_delete($id = null) {
 		if (!$id) {
 			$this->Session->setFlash(__('Invalid id for InstantPaymentNotification'));
 			$this->redirect(array('action'=>'index'));

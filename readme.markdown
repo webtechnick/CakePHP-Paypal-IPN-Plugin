@@ -33,7 +33,7 @@ http://github.com/webtechnick
 1. Copy plugin into your `app/Plugin/PaypalIpn` directory
 2. Load the plugin in `bootstrap.php`
 
-		CakePlugin::('PaypalIpn');
+		CakePlugin::load('PaypalIpn');
 
 2. Run the schema to create the required tables.
 
@@ -51,37 +51,38 @@ http://github.com/webtechnick
 1. I suggest you start a sandbox account at https://developer.paypal.com
 2. Enable IPN in your account.
   
-# Administration: (optional) If you want to use the built in admin access to IPNs:
+## Administration: (optional) If you want to use the built in admin access to IPNs:
 1. Make sure you're logged in as an Administrator via the Auth component.
 2. Navigate to `www.yoursite.com/paypal_ipn`
 
 
-# Paypal Button Helper: (optional) if you plan on using the paypal helper for your PayNow or Subscribe Buttons
-1. Update `/paypal_ipn/config/paypal_ipn_config.php` with your paypal information
-2. Add `PaypalIpn.Paypal` to your helpers list in `app_controller.php`
+## Paypal Button Helper: (optional) if you plan on using the paypal helper for your PayNow or Subscribe Buttons
+1. Update `Config/paypal_ipn_config.php` with your paypal information
+2. Add `PaypalIpn.Paypal` to your helpers list in `AppController.php`
 
-	public $helpers = array('Html','Form','PaypalIpn.Paypal');
+		public $helpers = array('Html','Form','PaypalIpn.Paypal');
 	
-## Usage: (view the actual Plugin/PaypalIpn/View/Helper/PaypalHelper.php for more information)
-       $this->Paypal->button(String tittle, Options array); 
-         
-       $this->Paypal->button('Pay Now', array('amount' => '12.00', 'item_name' => 'test item'));
-       $this->Paypal->button('Subscribe', array('type' => 'subscribe', 'amount' => '60.00', 'term' => 'month', 'period' => '2'));
-       $this->Paypal->button('Donate', array('type' => 'donate', 'amount' => '60.00'));
-       $this->Paypal->button('Add To Cart', array('type' => 'addtocart', 'amount' => '15.00'));
-       $this->Paypal->button('View Cart', array('type' => 'viewcart', 'amount' => '15.00'));
-       $this->Paypal->button('Unsubscribe', array('type' => 'unsubscribe'));
-       $this->Paypal->button('Checkout', array(
-					'type' => 'cart',
-					'items' => array(
-						array('item_name' => 'Item 1', 'amount' => '120', 'quantity' => 2, 'item_number' => '1234'),
-						array('item_name' => 'Item 2', 'amount' => '50'),
-						array('item_name' => 'Item 3', 'amount' => '80', 'quantity' => 3),
-					)
-				));
-				
-       //Test Example
-       $this->Paypal->button('Pay Now', array('test' => true, 'amount' => '12.00', 'item_name' => 'test item'));
+### Usage: (view the actual Plugin/PaypalIpn/View/Helper/PaypalHelper.php for more information)
+
+		$this->Paypal->button(String tittle, Options array); 
+	 
+		$this->Paypal->button('Pay Now', array('amount' => '12.00', 'item_name' => 'test item'));
+		$this->Paypal->button('Subscribe', array('type' => 'subscribe', 'amount' => '60.00', 'term' => 'month', 'period' => '2'));
+		$this->Paypal->button('Donate', array('type' => 'donate', 'amount' => '60.00'));
+		$this->Paypal->button('Add To Cart', array('type' => 'addtocart', 'amount' => '15.00'));
+		$this->Paypal->button('View Cart', array('type' => 'viewcart', 'amount' => '15.00'));
+		$this->Paypal->button('Unsubscribe', array('type' => 'unsubscribe'));
+		$this->Paypal->button('Checkout', array(
+			'type' => 'cart',
+			'items' => array(
+				array('item_name' => 'Item 1', 'amount' => '120', 'quantity' => 2, 'item_number' => '1234'),
+				array('item_name' => 'Item 2', 'amount' => '50'),
+				array('item_name' => 'Item 3', 'amount' => '80', 'quantity' => 3),
+			)
+		));
+		
+		//Test Example
+		$this->Paypal->button('Pay Now', array('test' => true, 'amount' => '12.00', 'item_name' => 'test item'));
        
 ## Alternatively to Paypal Helper 
 Instead of the Paypal Helper you can use your custom buttons but make sure to set notify_url to your configured route.
@@ -115,7 +116,7 @@ Create a function in your `app/Controller/AppController.php` like so:
 		}
 	} 
   
-# Basic Email Feature:
+## Basic Email Feature:
 Utility method to send basic emails based on a paypal IPN transaction.
 This method is very basic, if you need something more complicated I suggest
 creating your own method in the afterPaypalNotification function you build
@@ -143,7 +144,7 @@ Hint: use this in your afterPaypalNotification callback in your `AppController.p
 		));
 	}
 
-## Email Options:
+### Email Options:
 * id: id of instant payment notification to base email off of
 * subject: subject of email (default: Thank you for your paypal transaction)
 * sendAs: html | text (default: html)

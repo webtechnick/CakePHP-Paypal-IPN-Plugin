@@ -28,6 +28,7 @@ class InstantPaymentNotificationsController extends PaypalIpnAppController {
  * @author Nick Baker
  */
 	public function process() {
+		$this->autoRender = false;
 		$this->log('Process accessed', 'paypal');
 		if ($this->request->is('post')) {
 			$this->log('POST ' . print_r($_POST, true), 'paypal');

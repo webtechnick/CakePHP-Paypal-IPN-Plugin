@@ -15,6 +15,7 @@ class InstantPaymentNotificationsController extends PaypalIpnAppController {
 		}
 		if (isset($this->Security) && $this->action == 'process') {
 		  $this->Security->validatePost = false;
+		  $this->Security->csrfCheck = false;
 		}
 	}
 
